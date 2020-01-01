@@ -348,8 +348,6 @@
     </div>
     <br />
   </div>
-  {:else if show = "group-result"}
-  <PoolResult groupPool></PoolResult>
 {:else if show == "kata"}
   <div class="container mb-4 pb-4">
     <div
