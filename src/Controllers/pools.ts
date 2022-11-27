@@ -5,11 +5,17 @@ const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: '../../sqlite/test.db'
   });
+export enum EpoolStatus {
+  CREATED = 0,
+  ACTIVE = 1,
+  COMPLETED = 2,
+  CLOSED = 3
 
+}
 export interface Ipool {
     poolName?: string;
     entries?: Ientry[];
-    status?: number;
+    status?: EpoolStatus;
     competitionId?: number;
     categoryId?: number;
     createdAt?: Date;

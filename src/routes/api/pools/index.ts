@@ -1,7 +1,7 @@
 import { Category } from "../../../Controllers/category";
 import { Competition } from "../../../Controllers/competition";
 import type { Ientry } from "../../../Controllers/entries";
-import { Ipool, Pool, poolEntries } from "../../../Controllers/pools";
+import { EpoolStatus, Ipool, Pool, poolEntries } from "../../../Controllers/pools";
 
 export async function post(req, res){
     try {
@@ -56,5 +56,34 @@ export async function get(req, res){
         res.json(resp);
     } catch (error) {
         
+    }
+}
+
+//this api would activate a pool and make it the pool for the competition controller
+
+export async function put(req, res){
+
+    try {
+        const activeCompetition = await  Competition.findOne({where:{active: true}});
+        const activePools = await Pool.findOne({where:{status: EpoolStatus.ACTIVE,
+             competitionId: activeCompetition.id}});
+             if(activePools == null){
+               const data = await Pool.update({status: EpoolStatus.ACTIVE}, {where:{id: req.query.id}});
+               res.json({
+                msg: 'pool activated successfully',
+                status: true,
+                data
+               });
+             }
+             else{
+                res.json({
+                    msg: 'there is a running pool at the moment',
+                    status: false
+                });
+             }
+            
+    } catch (error) {
+        console.log(error);
+        res.status(503).json(error)
     }
 }

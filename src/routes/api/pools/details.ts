@@ -1,5 +1,5 @@
 import { Entry } from "../../../Controllers/entries";
-import { Pool } from "../../../Controllers/pools";
+import { Pool, poolEntries } from "../../../Controllers/pools";
 
 
 export async function get(req, res) {
@@ -19,6 +19,18 @@ export async function put(req, res){
         let entries = resp[0]["entries"];
         console.log(entries);
         res.json(entries);
+    } catch (error) {
+        
+    }
+}
+
+//api to update kata for an athlete in a pool
+
+export async function patch(req, res){
+    try {
+        const {poolId, entryId, kata} = req.query;
+       const resp = await poolEntries.update({kata}, {where: {poolId, entryId }});
+       res.json(resp);
     } catch (error) {
         
     }

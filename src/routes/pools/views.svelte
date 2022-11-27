@@ -5,17 +5,26 @@
     export async function preload(page, session) {
         console.log(page);
         const res = await this.fetch(`api/pools/details?id=${page.query.id}`);
+        const res2 = await this.fetch(`api/kata`);
+        const katas = await res2.json();
         const poolist = await res.json();
         const id = page.query.id;
         const pool = poolist[0];
-        return { pool, id };
+        return { pool, id, katas };
     }
 </script>
 <script>
+    import axios from "axios";
+
     import { onMount } from "svelte";
 
     import TopBar from "../../components/TopBar.svelte";
-    export let pool;
+    import {
+    EnotificationType,
+    handleNotification,
+  } from "../../functions/browserFunctions";
+    export let pool, katas;
+   
     const generate =()=>{
         const data = pool.entries;
     const fileName = pool.poolName;
@@ -23,9 +32,22 @@
 
     window.exportFromJSON({ data, fileName, exportType })
     }
-    console.log(pool);
+    console.log(katas);
+    const updateKata =async (entry, i)=>{
+        try {
+        const kata = document.getElementById('kata' + i).value;
+            let resp = await axios.patch(`api/pools/details?poolId=${pool.id}&entryId=${entry.id}&kata=${kata}`);
+            if(resp){
+                
+        handleNotification(window, 'kata updated successfully', EnotificationType.SUCCESS);
+            }
+        } catch (error) {
+            
+        handleNotification(window, 'kata update failed', EnotificationType.ERROR);
+        }
+    }
     onMount(()=>{
-       // console.log(window);
+        console.log(pool);
     })
 </script>
 
@@ -55,6 +77,7 @@
             <th style="color:white">Athlete Name</th>
             <th class="" style="color:white">created Date</th>
         
+            <th class="" style="color:white"> Kata</th>
             <th style="color:white">Active</th>
             <th style="color:white">Actions</th>
         </tr>
@@ -65,7 +88,17 @@
                 <td>{i + 1}</td>
                 <td>{entry.name}</td>
                 <td>{entry.createdAt}</td>
-               
+               <td>
+                <select id="kata{i}"  on:change={()=>{updateKata(entry, i)}} data-role="select">
+                    {#if entry.pool_entries.kata  == null}
+                       <option selected disabled> Pick a kata to perform</option>
+                    {/if}
+                    <option value="none">none</option>
+                   {#each katas as kata}
+                     <option selected={kata.name == entry.pool_entries.kata} value="{kata.name}">{kata.name}</option>
+                   {/each}
+                    </select>
+               </td>
                 <td>{#if entry.pool_entries.status}
                     <span class="mif-done mif-2x fg-green"></span>
                 {:else}

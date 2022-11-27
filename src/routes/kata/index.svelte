@@ -27,9 +27,8 @@ const deleteKata =async (kata)=>{
         console.log(resp);
         handleNotification(window, 'kata deleted successfully', EnotificationType.SUCCESS);
         katas.forEach((element, i )=> {
-            if(element.id == kata.id){
-               katas.splice(i,1);
-            }
+            if(element.id == kata.id) katas.splice(i,1);
+           
         });
         katas = katas;
       }
