@@ -12,12 +12,16 @@ console.log('new activation', katas);
 
 <script >
     import axios from "axios";
-
+    import {
+    EnotificationType,
+    handleNotification,
+  } from "../../functions/browserFunctions";
   import TopBar from "../../components/TopBar.svelte";
   export let katas = [];
     console.log(katas);
 const deleteKata =async (kata)=>{
     try {
+      if(!confirm(`you are about to delete kata ${kata.name}`)) return ;
       const resp = await  axios.delete('api/kata?id=' + kata.id);
       if(resp){
         console.log(resp);
