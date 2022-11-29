@@ -1,6 +1,6 @@
 import { Category } from "../../../Controllers/category";
 import { Competition } from "../../../Controllers/competition";
-import type { Ientry } from "../../../Controllers/entries";
+import { Entry, Ientry } from "../../../Controllers/entries";
 import { EpoolStatus, Ipool, Pool, poolEntries } from "../../../Controllers/pools";
 
 export async function post(req, res){
@@ -85,5 +85,17 @@ export async function put(req, res){
     } catch (error) {
         console.log(error);
         res.status(503).json(error)
+    }
+}
+
+export async function patch(req, res){
+    try {
+        const activeCompetition = await  Competition.findOne({where:{active: true}});
+        const resp = await Pool.findOne({where:
+          {competitionId: activeCompetition.id, status: EpoolStatus.ACTIVE},include: Entry}) ;
+          res.json(resp);
+
+    } catch (error) {
+        
     }
 }

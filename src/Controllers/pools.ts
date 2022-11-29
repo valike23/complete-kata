@@ -9,7 +9,8 @@ export enum EpoolStatus {
   CREATED = 0,
   ACTIVE = 1,
   COMPLETED = 2,
-  CLOSED = 3
+  CLOSED = 3,
+  PAUSED = 4
 
 }
 export interface Ipool {
