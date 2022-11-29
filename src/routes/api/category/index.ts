@@ -5,10 +5,12 @@ import { Competition, Icompetition } from "../../../Controllers/competition";
 export async function post(req, res) {
    try {
     const category = JSON.parse(req.fields.body);
+    console.log('category', category);
     const resp = await Category.create(category);
     res.json(resp);
    } catch (error) {
-    
+    console.log(error);
+    res.status(503).json(error);
    }
        
 }

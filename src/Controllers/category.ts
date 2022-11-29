@@ -57,7 +57,6 @@ Category.init({
 
 Category.hasMany(Entry);
 Category.hasMany(Pool);
-
 Category.sync();
 
 
