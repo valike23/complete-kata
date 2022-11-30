@@ -11,11 +11,32 @@ console.log('new activation', entries);
 </script>
 
 <script >
+  import axios from "axios";
+
   import TopBar from "../../components/TopBar.svelte";
+  import { EnotificationType, handleNotification } from "../../functions/browserFunctions";
   export let entries;
     console.log(entries);
 
- 
+ const switchName =(entry, i)=>{
+    entries[i].edit = true;
+ }
+ const updateEntry =async (entry, i)=>{
+    entries[i].edit = false;
+    console.log(entries[i]);
+
+    try {
+        let form = new FormData();
+        form.append('body',JSON.stringify({name:entries[i].name}));
+        const resp = await axios.patch('api/entries?id=' + entries[i].id, form);
+        if(resp){
+            handleNotification(window,'update successful', EnotificationType.SUCCESS);
+        }
+    } catch (error) {
+        
+        handleNotification(window,'update failed', EnotificationType.ERROR);
+    }
+ }
     
 </script>
 <svelte:head>
@@ -52,7 +73,13 @@ console.log('new activation', entries);
                         {#each entries as entry, i}
                             <tr>
                                 <td>{i + 1}</td>
-                                <td>{entry.name}</td>
+                               {#if !entry.edit}
+                               <!-- svelte-ignore a11y-click-events-have-key-events -->
+                               <td  on:click={()=>{switchName(entry,i)}}>{entry.name}</td>
+                               {:else}
+                               <!-- svelte-ignore a11y-click-events-have-key-events -->
+                               <td><input on:blur={()=>{updateEntry(entry,i)}} bind:value={entries[i].name}/></td>
+                               {/if}
                               
                              <td>{entry.categoryName}</td>
                              <td>{entry.clubName}</td>

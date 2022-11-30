@@ -104,14 +104,12 @@
 
 		<div
 			class="tiles-grid tiles-group size-2 fg-white"
-			data-group-title="Games"
+			data-group-title="Others"
 		>
-			<div
-				data-role="tile"
-				data-cover="../../images/Battlefield_4_Icon.png"
-			>
-				<span class="branding-bar">Battlefield 4</span>
-			</div>
+		<a href="/judges" data-role="tile" class="bg-red fg-white">
+			<span class="mif-balance-scale icon" />
+			<span class="branding-bar">Manage Judges</span>
+		</a>
 			<div data-role="tile" class="bg-green">
 				<img src="../../images/x-box.png" class="icon" />
 				<span class="branding-bar">XBOX ONE</span>

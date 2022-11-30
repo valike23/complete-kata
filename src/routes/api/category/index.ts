@@ -37,3 +37,12 @@ export async function get(req, res){
     }
 }
 
+export async function del(req, res) {
+    try {
+     const resp = await Category.destroy({where:{id: req.query.id}});
+     res.json(resp);
+    } catch (error) {
+       res.status(503).json(error);
+    }
+}
+

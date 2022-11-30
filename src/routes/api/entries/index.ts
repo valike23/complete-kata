@@ -114,3 +114,15 @@ export async function get(req, res){
         res.json({});
     }
 }
+
+export async function patch(req, res){
+    try {
+        const body = JSON.parse(req.fields.body);
+        const resp = await Entry.update(body, {where:{id: req.query.id}});
+        console.log(resp);
+        res.json(resp);
+    } catch (error) {
+        console.log(error);
+        res.status(503).json(error);
+    }
+}
