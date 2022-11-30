@@ -37,6 +37,32 @@ console.log('new activation', entries);
         handleNotification(window,'update failed', EnotificationType.ERROR);
     }
  }
+
+ const deleteEntry = async (entry) => {
+    try {
+      if (!confirm(`you are about to delete entry ${entry.name}`)) return;
+      const resp = await axios.delete("api/entries?id=" + entry.id);
+      if (resp) {
+        console.log(resp);
+        handleNotification(
+          window,
+          "entry deleted successfully",
+          EnotificationType.SUCCESS
+        );
+        entries.forEach((element, i) => {
+          if (element.id == entry.id) entries.splice(i, 1);
+        });
+        entries = entries;
+      }
+    } catch (error) {
+        console.log(error);
+      handleNotification(
+        window,
+        "oops!!! something went wrong",
+        EnotificationType.ERROR
+      );
+    }
+  };
     
 </script>
 <svelte:head>
@@ -95,7 +121,7 @@ console.log('new activation', entries);
                          <td>{entry.createdAt}</td>
                                 <td
                                     >
-                                    <button class="button alert square ">
+                                    <button title="delete entry" on:click={()=>{deleteEntry(entry)}} class="button alert square ">
                                         <span class="mif-bin" />
                                     </button>
                                 </td>

@@ -128,3 +128,12 @@ export async function patch(req, res){
         res.status(503).json(error);
     }
 }
+
+export async function del(req, res) {
+    try {
+     const resp = await Entry.destroy({where:{id: req.query.id}});
+     res.json(resp);
+    } catch (error) {
+       res.status(503).json(error);
+    }
+}
