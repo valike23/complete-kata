@@ -32,12 +32,14 @@ export async function put(req, res){
         const workbook = readFile(req.files.excel.path);
         const activeCompetition = await  Competition.findOne({where:{active: true}});
         const clubs = await Club.findAll();
+        console.log('clubs here: ',clubs);
        if(activeCompetition){
         if(clubs){
             let sheet:any[] = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
             sheet.forEach((athlete,i)=>{
               athlete.categoryId = categoryId;
               athlete.competitionId = activeCompetition.id;
+             
               athlete.club = athlete.club.toLowerCase();
               clubs.forEach((club)=>{
                 if(club.clubName.toLowerCase() == athlete.club){
