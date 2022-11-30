@@ -1,7 +1,7 @@
 import { Competition } from "../../../Controllers/competition";
 import { generate } from "short-uuid";
 import { rename } from "fs";
-import { addClub, getAllClub, Iclub } from "../../../Controllers/club";
+import { addClub, Club, getAllClub, Iclub } from "../../../Controllers/club";
 
 export async function post(req, res) {
     try {
@@ -72,5 +72,14 @@ export async function put(req, res){
       }
     } catch (error) {
         
+    }
+}
+
+export async function del(req, res) {
+    try {
+     const resp = await Club.destroy({where:{id: req.query.id}});
+     res.json(resp);
+    } catch (error) {
+       res.status(503).json(error);
     }
 }
