@@ -32,7 +32,7 @@ export let ips;
         <div class="card">
             <div class="card-body">
                 <p>judges screen</p>
-                <p><a target=”_blank” href="{ips[0] + '/judgescreen'}">{ips[0] + '/judgescreen'}</a></p>
+                <p><a target=”_blank” href="{ips[0] + '/screen/judgescreen'}">{ips[0] + '/screen/judgescreen'}</a></p>
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@ export let ips;
         <div class="card">
             <div class="card-body">
                 <p>Public Display screen</p>
-                <p><a target=”_blank” href="{ips[0] + '/external'}">{ips[0] + '/external'}</a></p>
+                <p><a target=”_blank” href="{ips[0] + '/screen/external'}">{ips[0] + '/screen/external'}</a></p>
             </div>
         </div>
     </div>
