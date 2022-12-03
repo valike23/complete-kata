@@ -16,9 +16,13 @@
 <script>
     import {competitionController} from "../functions/controller";
   import TopBar from "../components/TopBar.svelte";
+  import { onMount } from "svelte";
   export let pool, judges =[];
   let setFirst = false;
+  let socket = {};
   let currentAthlete = {};
+  let fakePool = JSON.parse(JSON.stringify(pool));
+  delete(fakePool.entries);
   console.log(pool);
   let totalAth = 0;
   let totalTech = 0;
@@ -29,7 +33,12 @@
     })
   }
   resetVariables();
-  
+  const startKata = ()=>{
+    socket.emit("start judge", {
+          athlete: controller.currentAthlete,
+          pool: fakePool,
+        });
+  }
   let result = 0;
   let nextAthlete = {};
   
@@ -48,6 +57,22 @@
   }
   //console.log(pool.entries);
  let controller = new competitionController(pool.entries);
+ onMount(()=>{
+  socket = window.io("/display");
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    socket.on("judge scores", (data) => {
+      console.log(data);
+      judges.forEach((judge, i)=>{
+        if(judge.id == data.judgeId){
+          judges[i].technical_performance = data.TEC;
+          judges[i].athletic_performance = data.ATH;
+
+        }
+      })
+    });
+ })
  
 </script>
 
@@ -85,6 +110,9 @@
 
   <div class="m-0 row">
     <div class="w-100 col-12">
+      <div class="text-center">
+        <button on:click={startKata} class="button primary ">start kata</button>
+      </div>
       <table
         class="table table-bordered table-responsive font-size-17"
         width="100%"

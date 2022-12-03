@@ -100,7 +100,6 @@ Pool.belongsToMany(Entry,{through: poolEntries});
 Entry.belongsToMany(Pool, {through: poolEntries});
 poolEntries.belongsToMany(Judge,{through: poolEntriesJudge});
 Judge.belongsToMany(poolEntries, {through: poolEntriesJudge});
-
 Pool.sync();
 poolEntries.sync();
 poolEntriesJudge.sync();

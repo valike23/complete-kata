@@ -52,7 +52,6 @@ Competition.init({
 
 Competition.hasMany(Category);
 Competition.hasMany(Entry);
-
 Competition.sync();
 export const createCompetition = async (competition: Icompetition)=>{
     try {
