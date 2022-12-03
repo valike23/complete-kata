@@ -35,3 +35,8 @@ export async function patch(req, res){
         
     }
 }
+
+export async function post(req, res){
+    let data = await poolEntries.findAll();
+    res.json(data);
+}

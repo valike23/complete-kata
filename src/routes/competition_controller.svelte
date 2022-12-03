@@ -19,10 +19,9 @@
   export let pool, judges =[];
   let setFirst = false;
   let currentAthlete = {};
+  console.log(pool);
   let totalAth = 0;
   let totalTech = 0;
-  let result = 0;
-  let nextAthlete = {};
   const resetVariables =()=>{
     judges.forEach((judge, i)=>{
       judges[i].athletic_performance = 0;
@@ -30,6 +29,23 @@
     })
   }
   resetVariables();
+  
+  let result = 0;
+  let nextAthlete = {};
+  
+
+  $: {
+   let AAP = 0;
+   let TAP = 0;
+    judges.forEach((j)=>{
+      TAP += j.technical_performance;
+      AAP += j.athletic_performance
+    })
+  
+    console.log(AAP, TAP);
+    totalTech = AAP/judges.length;
+    totalAth = TAP/judges.length;
+  }
   //console.log(pool.entries);
  let controller = new competitionController(pool.entries);
  

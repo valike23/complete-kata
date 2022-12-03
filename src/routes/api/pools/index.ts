@@ -96,6 +96,7 @@ export async function patch(req, res){
           res.json(resp);
 
     } catch (error) {
-        
+        console.log(error);
+        res.status(503).json(error)
     }
 }
