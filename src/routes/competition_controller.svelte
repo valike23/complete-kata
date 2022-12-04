@@ -113,6 +113,12 @@
      document.getElementById('tp'+ highestTP.id).style.color = 'red';
       document.getElementById('ap'+ lowestAP.id).style.color = 'red';
       document.getElementById('ap'+ highestAP.id).style.color = 'red';
+      AAP = AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
+      TAP = TAP - highestTP.technical_performance - lowestTP.technical_performance;
+      totalAth = AAP;
+      totalTech = TAP;
+      result = (totalAth * 0.3) + (totalTech * 0.7);
+
     }
     else {
       totalTech = AAP / judges.length;
