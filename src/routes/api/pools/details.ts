@@ -7,7 +7,8 @@ export async function get(req, res) {
      const resp = await  Pool.findAll({where:{id: req.query.id}, include: Entry}) ;
      res.json(resp);
     } catch (error) {
-        
+        console.log(error);
+    res.status(500).json(error);
     }
 }
  
@@ -20,7 +21,8 @@ export async function put(req, res){
         console.log(entries);
         res.json(entries);
     } catch (error) {
-        
+        console.log(error);
+    res.status(500).json(error);
     }
 }
 
@@ -32,11 +34,17 @@ export async function patch(req, res){
        const resp = await poolEntries.update({kata}, {where: {poolId, entryId }});
        res.json(resp);
     } catch (error) {
-        
+        console.log(error);
+    res.status(500).json(error);
     }
 }
 
 export async function post(req, res){
+   try {
     let data = await poolEntries.findAll();
     res.json(data);
+   } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+   }
 }

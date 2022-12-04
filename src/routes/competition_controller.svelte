@@ -6,74 +6,98 @@
     console.log(page);
     //load active pool if there is no active pool then controller should not open
     const res = await this.fetch("api/pools", { method: "PATCH" });
-    const res2 = await this.fetch('api/judges');
+    const res2 = await this.fetch("api/judges");
+    const res3 = await this.fetch("/api/judges/pool");
+
+    const judgesResp = await res3.json();
     const pool = await res.json();
     const judges = await res2.json();
-    return { pool, judges };
+    return { pool, judges, judgesResp };
   }
 </script>
 
 <script>
-    import {competitionController} from "../functions/controller";
+  import { competitionController } from "../functions/controller";
   import TopBar from "../components/TopBar.svelte";
   import { onMount } from "svelte";
-  export let pool, judges =[];
+  import axios from "axios";
+  export let pool,
+    judges = [],
+    judgesResp = [];
   let setFirst = false;
   let socket = {};
-  let currentAthlete = {};
   let fakePool = JSON.parse(JSON.stringify(pool));
-  delete(fakePool.entries);
+  delete fakePool.entries;
   console.log(pool);
   let totalAth = 0;
   let totalTech = 0;
-  const resetVariables =()=>{
-    judges.forEach((judge, i)=>{
-      judges[i].athletic_performance = 0;
-      judges[i].technical_performance = 0;
-    })
-  }
-  resetVariables();
-  const startKata = ()=>{
-    socket.emit("start judge", {
-          athlete: controller.currentAthlete,
-          pool: fakePool,
-        });
-  }
-  let result = 0;
-  let nextAthlete = {};
+
+  let controller = new competitionController(pool.entries);
+  const resetVariables = async () => {
+   try {
+    let resp = await axios.put(
+      `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
+    );
+    if (resp) {
+      let judgesResult = resp.data;
+      for (let index = 0; index < judges.length; index++) {
+      const judge = judges[index];
+      for (let j = 0; j < judgesResult.judges.length; j++) {
+        const judgeResp = judgesResp[j];
+        if (judgeResp.judgeId == judge.id) {
+          judges[index].athletic_performance = judgeResp.ATH;
+          judges[index].technical_performance = judgeResp.TEC;
+          break;
+        }
+        judges[index].athletic_performance = 0;
+        judges[index].technical_performance = 0;
+      }
+    }
+    }
+   } catch (error) {
+    console.log(error);
+   }
+   
+  };
   
+  const startKata = () => {
+    socket.emit("start judge", {
+      athlete: controller.currentAthlete,
+      pool: fakePool,
+    });
+  };
+  let result = 0;
 
   $: {
-   let AAP = 0;
-   let TAP = 0;
-    judges.forEach((j)=>{
+    let AAP = 0;
+    let TAP = 0;
+    judges.forEach((j) => {
       TAP += j.technical_performance;
-      AAP += j.athletic_performance
-    })
-  
+      AAP += j.athletic_performance;
+    });
+
     console.log(AAP, TAP);
-    totalTech = AAP/judges.length;
-    totalAth = TAP/judges.length;
+    totalTech = AAP / judges.length;
+    totalAth = TAP / judges.length;
   }
   //console.log(pool.entries);
- let controller = new competitionController(pool.entries);
- onMount(()=>{
-  socket = window.io("/display");
+  
+  onMount(() => {
+    resetVariables();
+    socket = window.io("/display");
     socket.on("connect", () => {
       console.log(socket.id);
     });
     socket.on("judge scores", (data) => {
       console.log(data);
-      judges.forEach((judge, i)=>{
-        if(judge.id == data.judgeId){
+      judges.forEach((judge, i) => {
+        if (judge.id == data.judgeId) {
           judges[i].technical_performance = data.TEC;
           judges[i].athletic_performance = data.ATH;
-
         }
-      })
+      });
     });
- })
- 
+  });
 </script>
 
 <svelte:head>
@@ -87,46 +111,44 @@
   <h3>Pool Name: {pool.poolName}</h3>
   <div class="row">
     <div class="cell">
-        <div class="card small">
-            <div class="card-body">
-                <p><small>Next Athlete</small></p>
-                <p><strong>{controller.nextAthlete.name}</strong></p>
-            </div>
+      <div class="card small">
+        <div class="card-body">
+          <p><small>Next Athlete</small></p>
+          <p><strong>{controller.nextAthlete.name}</strong></p>
         </div>
-     
-      
+      </div>
     </div>
     <div class="cell float-right">
-        <div class="card small bg-green">
-            <div class="card-body">
-                <p><small>
-                    Current Athlete</small></p>
-                <p><strong>{controller.currentAthlete.name}</strong></p>
-            </div>
+      <div class="card small bg-green">
+        <div class="card-body">
+          <p><small> Current Athlete</small></p>
+          <p><strong>{controller.currentAthlete.name}</strong></p>
         </div>
+      </div>
     </div>
   </div>
-
 
   <div class="m-0 row">
     <div class="w-100 col-12">
       <div class="text-center">
         <button on:click={startKata} class="button primary ">start kata</button>
       </div>
+      <br>
       <table
-        class="table table-bordered table-responsive font-size-17"
+        class="table table-bordered table-responsive font-size-17 mt-5"
         width="100%"
       >
-        <thead class="thead-dark"
-          ><tr
-            ><th />{#each judges as judge, i}
-              <th>{"judge" + (i + 1)}</th>
-            {/each}<th>TOTAL</th><th>FACTOR</th><th>RESULT</th></tr
+        <thead 
+          ><tr 
+            ><th  />{#each judges as judge, i}
+              <th style="color: white">{"judge" + (i + 1)}</th>
+            {/each}<th style="color: white">TOTAL</th>
+            <th style="color: white">FACTOR</th>
+            <th style="color: white">RESULT</th></tr
           ></thead
         ><tbody
           ><tr
-            ><td class="font-weight-bolder">TECH</td
-            >{#each judges as judge}
+            ><td class="font-weight-bolder">TECH</td>{#each judges as judge}
               <td>{judge.technical_performance}</td>
             {/each}<td>{totalTech.toFixed(2)}</td><td>0.7</td><td
               >{(totalTech * 0.7).toFixed(2)}</td
@@ -153,11 +175,10 @@
   </div>
 </div>
 
-
 <style>
-    .small{
-        padding: 8px;
-        width: 300px;
-        color: black;
-    }
+  .small {
+    padding: 8px;
+    width: 300px;
+    color: black;
+  }
 </style>

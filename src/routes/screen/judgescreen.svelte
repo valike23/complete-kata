@@ -46,7 +46,12 @@
     }
   };
   let submitScore = async () => {
+  
     let res = confirm("do you want to upload this athlete's score?");
+    athleticPerformance = Number(document.getElementById('athleticPerformance').value) ;
+    technicalPerformance = Number(document.getElementById('technicalPerformance').value);
+    console.log(athleticPerformance, technicalPerformance);
+    
     try {
       if (res) {
         let judgeResult = {
@@ -229,6 +234,7 @@
                   data-role="spinner"
                   data-min-value="0"
                   data-max-value="10"
+                  id="technicalPerformance"
                   bind:value={technicalPerformance}
                   data-step=".2"
                   data-fixed="1"
@@ -248,6 +254,7 @@
                   data-role="spinner"
                   data-min-value="0"
                   data-max-value="10"
+                  id="athleticPerformance"
                   bind:value={athleticPerformance}
                   data-step=".2"
                   data-fixed="1"

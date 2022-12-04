@@ -26,3 +26,20 @@ export async function get(req, res){
     res.status(503).json(error);
     }
 }
+
+export async function put(req, res){
+    try {
+        const  {poolId, entryId} = req.query;
+        let resp: any = {};
+        const poolEntry: any = await poolEntries.findOne({where:{poolId, entryId}});
+        console.log(poolEntry.dataValues.id);
+        const poolJudgeResult = await poolEntriesJudge.findAll({where:{poolEntryId: poolEntry.dataValues.id}});
+     
+        resp = poolEntry.dataValues;
+        resp.judges = poolJudgeResult;
+        res.json(resp);
+    } catch (error) {
+        console.log(error);
+    res.status(503).json(error);
+    }
+}
