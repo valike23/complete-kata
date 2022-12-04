@@ -44,7 +44,7 @@
                 );
                 pools.forEach((element, i) => {
                     if (element.id == pool.id)
-                        pool[i].status = 1;
+                        pools[i].status = 1;
                 });
                 pools = pools;
             } else {
@@ -83,7 +83,7 @@
                 );
                 pools.forEach((element, i) => {
                     if (element.id == pool.id)
-                        pool[i].status = 4;
+                        pools[i].status = 4;
                 });
                 pools = pools;
             } else {
