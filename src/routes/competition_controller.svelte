@@ -93,7 +93,7 @@
     });
 
     console.log(AAP, TAP);
-    if(judges.length >= 5){
+    if(isComplete){
       submit = true;
       judges.sort((a,b)=>{
         return a.technical_performance - b.technical_performance;
@@ -110,7 +110,7 @@
       console.log('lowest AP', lowestAP);
       console.log('highest AP', highestAP);
       document.getElementById('tp'+ lowestTP.id).style.color = 'red';
-     // document.getElementById('tp'+ highestTP.id).style.color = 'red';
+     document.getElementById('tp'+ highestTP.id).style.color = 'red';
       document.getElementById('ap'+ lowestAP.id).style.color = 'red';
       document.getElementById('ap'+ highestAP.id).style.color = 'red';
     }
