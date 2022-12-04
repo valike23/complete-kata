@@ -27,7 +27,7 @@
     judgesResp = [];
     let poolEntryId = 0;
   let submit = false;
-  let setFirst = false;
+  let endofPool = false;
   let isFinal = false;
   let socket = {};
   let fakePool = JSON.parse(JSON.stringify(pool));
@@ -41,7 +41,8 @@ console.log('pool entries', pool.entries);
     controller.nextAthlete = {name: 'empty'};
   }
   if(!controller.currentAthlete){
-    
+    controller.currentAthlete = {name: 'empty'};
+    endofPool = true;
   }
   const resetVariables = async () => {
     try {
@@ -165,7 +166,19 @@ console.log('pool entries', pool.entries);
   }
   //console.log(pool.entries);
 
-  onMount(() => {
+  onMount(async () => {
+    if(endofPool){
+      handleNotification(window, 'closing this pool...', EnotificationType.INFO);
+      try {
+        const resp = await axios.patch('api/pools/scores?id=' + fakePool.id);
+        if(resp){
+          handleNotification(window,'pool completed successfully',EnotificationType.SUCCESS,()=>{location('/pools')})
+        }
+      } catch (error) {
+        console.log(error);
+        handleNotification(window, 'an error occured', EnotificationType.ERROR)
+      }
+    }
     resetVariables();
 
     socket = window.io("/display");
