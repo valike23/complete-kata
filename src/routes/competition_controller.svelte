@@ -37,6 +37,12 @@
   let totalTech = 0;
 console.log('pool entries', pool.entries);
   let controller = new competitionController(pool.entries);
+  if(!controller.nextAthlete ){
+    controller.nextAthlete = {name: 'empty'};
+  }
+  if(!controller.currentAthlete){
+    
+  }
   const resetVariables = async () => {
     try {
       let resp = await axios.put(
