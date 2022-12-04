@@ -21,18 +21,21 @@
   import TopBar from "../components/TopBar.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
+  import { EnotificationType, handleNotification } from "../functions/browserFunctions";
   export let pool,
     judges = [],
     judgesResp = [];
+    let poolEntryId = 0;
   let submit = false;
   let setFirst = false;
+  let isFinal = false;
   let socket = {};
   let fakePool = JSON.parse(JSON.stringify(pool));
   delete fakePool.entries;
   console.log(pool);
   let totalAth = 0;
   let totalTech = 0;
-
+console.log('pool entries', pool.entries);
   let controller = new competitionController(pool.entries);
   const resetVariables = async () => {
     try {
@@ -40,6 +43,8 @@
         `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
       );
       if (resp) {
+        console.log('my judge data', resp);
+        poolEntryId = resp.data.id;
         let judgesResult = resp.data;
         for (let index = 0; index < judges.length; index++) {
           const judge = judges[index];
@@ -128,8 +133,29 @@
       totalAth = TAP / judges.length;
     }
   };
-  const upload =()=>{
-    
+  const upload =async ()=>{
+    let resp = confirm('do you want to upload the result?');
+    if(!resp) return;
+    let body =  {
+      total: result,
+      ATH: totalAth * 0.3,
+      TEC: totalTech * 0.7
+    };
+    const form = new FormData();
+    form.append('body', JSON.stringify(body));
+    try {
+     let res= await axios.put('api/pools/scores?id='+ poolEntryId, form);
+     if(res){
+      handleNotification(window, 'scores uploaded successfully', EnotificationType.SUCCESS,()=>{location.reload()});
+      controller.updateNextEntry();
+      
+     }
+    } catch (error) {
+      console.error(error);
+      handleNotification(window,'something went wrong', EnotificationType.ERROR);
+    }
+
+
   }
   //console.log(pool.entries);
 
@@ -226,9 +252,12 @@
       </table>
 
       <div class="row mt-4">
-        <div class="cell-3" />
+        <div class="cell-3" >
+
+<input type="checkbox" data-style="2" bind:checked={isFinal}  data-role="checkbox" data-caption="is Final Bouth" data-indeterminate="true">
+        </div>
         <div class="cell-9 text-center">
-          <button class="button success" on:click={upload}
+          <button disabled="{!submit}" class="button success" on:click={upload}
             >upload to screen</button
           >
         </div>
