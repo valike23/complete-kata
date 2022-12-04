@@ -24,6 +24,7 @@
   export let pool,
     judges = [],
     judgesResp = [];
+    let submit = false;
   let setFirst = false;
   let socket = {};
   let fakePool = JSON.parse(JSON.stringify(pool));
@@ -52,6 +53,7 @@
         judges[index].athletic_performance = 0;
         judges[index].technical_performance = 0;
       }
+      setup();
     }
     }
    } catch (error) {
@@ -68,22 +70,61 @@
   };
   let result = 0;
 
-  $: {
+ const setup = function(){
     let AAP = 0;
     let TAP = 0;
+    let isComplete = false;
+    for (let index = 0; index < judges.length; index++) {
+      const element = judges[index];
+      if(element.athletic_performance == undefined){
+        isComplete = false;
+        break;
+      }
+      else{
+        isComplete = true;
+      }
+      
+    }
     judges.forEach((j) => {
+
+      console.log(j.technical_performance,j.athletic_performance);
       TAP += j.technical_performance;
       AAP += j.athletic_performance;
     });
 
     console.log(AAP, TAP);
-    totalTech = AAP / judges.length;
+    if(judges.length >= 5){
+      submit = true;
+      judges.sort((a,b)=>{
+        return a.technical_performance - b.technical_performance;
+      });
+      let lowestTP = judges[0];
+      let highestTP = judges[4];
+      console.log('lowest TP', lowestTP);
+      console.log('highest TP', highestTP);
+      judges.sort((a,b)=>{
+        return a.athletic_performance - b.athletic_performance;
+      });
+      let lowestAP = judges[0];
+      let highestAP = judges[4];
+      console.log('lowest AP', lowestAP);
+      console.log('highest AP', highestAP);
+      document.getElementById('tp'+ lowestTP.id).style.color = 'red';
+     // document.getElementById('tp'+ highestTP.id).style.color = 'red';
+      document.getElementById('ap'+ lowestAP.id).style.color = 'red';
+      document.getElementById('ap'+ highestAP.id).style.color = 'red';
+    }
+    else {
+      totalTech = AAP / judges.length;
     totalAth = TAP / judges.length;
+    }
+   
   }
   //console.log(pool.entries);
-  
+ 
   onMount(() => {
     resetVariables();
+   
     socket = window.io("/display");
     socket.on("connect", () => {
       console.log(socket.id);
@@ -96,6 +137,7 @@
           judges[i].athletic_performance = data.ATH;
         }
       });
+      setup();
     });
   });
 </script>
@@ -149,14 +191,14 @@
         ><tbody
           ><tr
             ><td class="font-weight-bolder">TECH</td>{#each judges as judge}
-              <td>{judge.technical_performance}</td>
+              <td id="{'tp'+ judge.id}">{judge.technical_performance || ''}</td>
             {/each}<td>{totalTech.toFixed(2)}</td><td>0.7</td><td
               >{(totalTech * 0.7).toFixed(2)}</td
             ></tr
           ><tr
             ><td class="font-weight-bolder">ATH</td>
             {#each judges as judge}
-              <td>{judge.athletic_performance}</td>
+              <td id="{'ap'+ judge.id}">{judge.athletic_performance || ''}</td>
             {/each}
             <td>{totalAth.toFixed(2)}</td><td>0.3</td><td
               >{(totalAth * 0.3).toFixed(2)}</td
