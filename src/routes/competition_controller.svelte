@@ -24,7 +24,7 @@
   export let pool,
     judges = [],
     judgesResp = [];
-    let submit = false;
+  let submit = false;
   let setFirst = false;
   let socket = {};
   let fakePool = JSON.parse(JSON.stringify(pool));
@@ -35,33 +35,32 @@
 
   let controller = new competitionController(pool.entries);
   const resetVariables = async () => {
-   try {
-    let resp = await axios.put(
-      `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
-    );
-    if (resp) {
-      let judgesResult = resp.data;
-      for (let index = 0; index < judges.length; index++) {
-      const judge = judges[index];
-      for (let j = 0; j < judgesResult.judges.length; j++) {
-        const judgeResp = judgesResp[j];
-        if (judgeResp.judgeId == judge.id) {
-          judges[index].athletic_performance = judgeResp.ATH;
-          judges[index].technical_performance = judgeResp.TEC;
-          break;
+    try {
+      let resp = await axios.put(
+        `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
+      );
+      if (resp) {
+        let judgesResult = resp.data;
+        for (let index = 0; index < judges.length; index++) {
+          const judge = judges[index];
+          for (let j = 0; j < judgesResult.judges.length; j++) {
+            const judgeResp = judgesResp[j];
+            if (judgeResp.judgeId == judge.id) {
+              judges[index].athletic_performance = judgeResp.ATH;
+              judges[index].technical_performance = judgeResp.TEC;
+              break;
+            }
+            judges[index].athletic_performance = 0;
+            judges[index].technical_performance = 0;
+          }
+          setup();
         }
-        judges[index].athletic_performance = 0;
-        judges[index].technical_performance = 0;
       }
-      setup();
+    } catch (error) {
+      console.log(error);
     }
-    }
-   } catch (error) {
-    console.log(error);
-   }
-   
   };
-  
+
   const startKata = () => {
     socket.emit("start judge", {
       athlete: controller.currentAthlete,
@@ -70,67 +69,73 @@
   };
   let result = 0;
 
- const setup = function(){
+  const setup = function () {
+    let tempJudges = JSON.parse(JSON.stringify(judges));
+    let tempJudges2 = JSON.parse(JSON.stringify(judges));
     let AAP = 0;
     let TAP = 0;
     let isComplete = false;
     for (let index = 0; index < judges.length; index++) {
       const element = judges[index];
-      if(element.athletic_performance == undefined){
+      if (element.athletic_performance == undefined) {
         isComplete = false;
         break;
-      }
-      else{
+      } else {
         isComplete = true;
       }
-      
     }
     judges.forEach((j) => {
-
-      console.log(j.technical_performance,j.athletic_performance);
+      console.log(j.technical_performance, j.athletic_performance);
       TAP += j.technical_performance;
       AAP += j.athletic_performance;
     });
 
     console.log(AAP, TAP);
-    if(isComplete){
+    if (isComplete) {
       submit = true;
-      judges.sort((a,b)=>{
+      tempJudges.sort((a, b) => {
         return a.technical_performance - b.technical_performance;
       });
-      let lowestTP = judges[0];
-      let highestTP = judges[4];
-      console.log('lowest TP', lowestTP);
-      console.log('highest TP', highestTP);
-      judges.sort((a,b)=>{
+      let lowestTP = tempJudges[0];
+      let highestTP = tempJudges[4];
+      console.log("lowest TP", lowestTP);
+      console.log("highest TP", highestTP);
+      tempJudges2.sort((a, b) => {
         return a.athletic_performance - b.athletic_performance;
       });
-      let lowestAP = judges[0];
-      let highestAP = judges[4];
-      console.log('lowest AP', lowestAP);
-      console.log('highest AP', highestAP);
-      document.getElementById('tp'+ lowestTP.id).style.color = 'red';
-     document.getElementById('tp'+ highestTP.id).style.color = 'red';
-      document.getElementById('ap'+ lowestAP.id).style.color = 'red';
-      document.getElementById('ap'+ highestAP.id).style.color = 'red';
-      AAP = AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
-      TAP = TAP - highestTP.technical_performance - lowestTP.technical_performance;
+      let lowestAP = tempJudges2[0];
+      let highestAP = tempJudges2[4];
+      console.log("lowest AP", lowestAP);
+      console.log("highest AP", highestAP);
+      const tpl = "tp" + lowestTP.id;
+      const tph = "tp" + highestTP.id;
+      const apl = "ap" + lowestAP.id;
+      const aph = "ap" + highestAP.id;
+      console.log(tpl, tph, apl, aph);
+      document.getElementById(tpl).style.color = "red";
+      document.getElementById(tph).style.color = "red";
+      document.getElementById(apl).style.color = "red";
+      document.getElementById(aph).style.color = "red";
+      AAP =
+        AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
+      TAP =
+        TAP - highestTP.technical_performance - lowestTP.technical_performance;
       totalAth = AAP;
       totalTech = TAP;
-      result = (totalAth * 0.3) + (totalTech * 0.7);
-
-    }
-    else {
+      result = totalAth * 0.3 + totalTech * 0.7;
+    } else {
       totalTech = AAP / judges.length;
-    totalAth = TAP / judges.length;
+      totalAth = TAP / judges.length;
     }
-   
+  };
+  const upload =()=>{
+    
   }
   //console.log(pool.entries);
- 
+
   onMount(() => {
     resetVariables();
-   
+
     socket = window.io("/display");
     socket.on("connect", () => {
       console.log(socket.id);
@@ -181,14 +186,14 @@
       <div class="text-center">
         <button on:click={startKata} class="button primary ">start kata</button>
       </div>
-      <br>
+      <br />
       <table
         class="table table-bordered table-responsive font-size-17 mt-5"
         width="100%"
       >
-        <thead 
-          ><tr 
-            ><th  />{#each judges as judge, i}
+        <thead
+          ><tr
+            ><th />{#each judges as judge, i}
               <th style="color: white">{"judge" + (i + 1)}</th>
             {/each}<th style="color: white">TOTAL</th>
             <th style="color: white">FACTOR</th>
@@ -197,14 +202,14 @@
         ><tbody
           ><tr
             ><td class="font-weight-bolder">TECH</td>{#each judges as judge}
-              <td id="{'tp'+ judge.id}">{judge.technical_performance || ''}</td>
+              <td id={"tp" + judge.id}>{judge.technical_performance || ""}</td>
             {/each}<td>{totalTech.toFixed(2)}</td><td>0.7</td><td
               >{(totalTech * 0.7).toFixed(2)}</td
             ></tr
           ><tr
             ><td class="font-weight-bolder">ATH</td>
             {#each judges as judge}
-              <td id="{'ap'+ judge.id}">{judge.athletic_performance || ''}</td>
+              <td id={"ap" + judge.id}>{judge.athletic_performance || ""}</td>
             {/each}
             <td>{totalAth.toFixed(2)}</td><td>0.3</td><td
               >{(totalAth * 0.3).toFixed(2)}</td
@@ -219,6 +224,15 @@
           ></tbody
         >
       </table>
+
+      <div class="row mt-4">
+        <div class="cell-3" />
+        <div class="cell-9 text-center">
+          <button class="button success" on:click={upload}
+            >upload to screen</button
+          >
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -63,6 +63,45 @@
             );
         }
     };
+    const pausePool = async (pool)=>{
+        try {
+            if (
+                !confirm(
+                    `Do you want to pause pool ${pool.poolName} for the event?`
+                )
+            )
+                return;
+                console.log(pool.id);
+            const resp = await axios.put("api/pools?id=" + pool.id + "&action=pause" );
+            console.log('resp',resp);
+            if (resp.data.status) {
+                console.log(resp);
+                handleNotification(
+                    window,
+                    resp.data.msg,
+                    EnotificationType.SUCCESS
+                );
+                pools.forEach((element, i) => {
+                    if (element.id == pool.id)
+                        pool[i].status = 4;
+                });
+                pools = pools;
+            } else {
+                handleNotification(
+                    window,
+                    resp.data.msg,
+                    EnotificationType.ERROR
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            handleNotification(
+                window,
+                "something went wrong",
+                EnotificationType.ERROR
+            );
+        }
+    }
 </script>
 
 <svelte:head>
@@ -95,32 +134,61 @@
                             <td>{pool.createdAt}</td>
                             <td>{pool.updatedAt}</td>
                             <td
-                                >{#if pool.status != 0}
+                                >{#if pool.status == 1}
                                     <span class="mif-done mif-2x fg-green" />
-                                {:else}
+                                {:else if pool.status == 2}
                                     <span
-                                        class="mif-cross-light mif-2x fg-red "
+                                        class="mif-done-all mif-2x fg-red "
                                     />
+                                    {:else if pool.status == 3}
+                                    <span
+                                    class="mif-stop mif-2x fg-red "
+                                />
+                                {:else if pool.status == 4}
+                                <span
+                                class="mif-pause mif-2x fg-blue "
+                            />
+                            {:else}
+                            <span
+                            class="mif-new-tab mif-2x fg-blue "
+                        />
                                 {/if}</td
                             >
                             <td
-                                ><button
-                                    on:click={() => {
-                                        viewPool(pool);
-                                    }}
-                                    class="button primary square "
-                                    title="make this competition active"
                                 >
-                                    <span class="mif-eye" />
-                                </button>
+                                
                                 <button
-                                    on:click={() => {
-                                        activatePool(pool);
-                                    }}
-                                    class="button success square "
-                                >
-                                    <span class="mif-checkmark" />
-                                </button>
+                                on:click={() => {
+                                    viewPool(pool);
+                                }}
+                                class="button primary square "
+                                title="make this competition active"
+                            >
+                                <span class="mif-eye" />
+                            </button>
+                               
+                               {#if pool.status == 1}
+                               <button
+                               on:click={() => {
+                                   pausePool(pool);
+                               }}
+                               class="button primary square "
+                               title="pause this competition"
+                           >
+                               <span class="mif-pause" />
+                           </button>
+                          
+                               {/if}
+                                {#if pool.status == 4 || pool.status == 0}
+                                <button
+                                on:click={() => {
+                                    activatePool(pool);
+                                }}
+                                class="button success square "
+                            >
+                                <span class="mif-checkmark" />
+                            </button>
+                                {/if}
                                 <button
                                     on:click={() => {
                                         deletePool(pool);

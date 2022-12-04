@@ -65,22 +65,32 @@ export async function put(req, res){
 
     try {
         const activeCompetition = await  Competition.findOne({where:{active: true}});
-        const activePools = await Pool.findOne({where:{status: EpoolStatus.ACTIVE,
-             competitionId: activeCompetition.id}});
-             if(activePools == null){
-               const data = await Pool.update({status: EpoolStatus.ACTIVE}, {where:{id: req.query.id}});
-               res.json({
-                msg: 'pool activated successfully',
-                status: true,
-                data
-               });
-             }
-             else{
-                res.json({
-                    msg: 'there is a running pool at the moment',
-                    status: false
-                });
-             }
+        if(req.query.action == 'pause'){
+            const data = await Pool.update({status: EpoolStatus.PAUSED}, {where:{id: req.query.id}});
+                  res.json({
+                   msg: 'pool activated successfully',
+                   status: true,
+                   data
+                  });
+        }
+        else{
+            const activePools = await Pool.findOne({where:{status: EpoolStatus.ACTIVE,
+                competitionId: activeCompetition.id}});
+                if(activePools == null){
+                  const data = await Pool.update({status: EpoolStatus.ACTIVE}, {where:{id: req.query.id}});
+                  res.json({
+                   msg: 'pool activated successfully',
+                   status: true,
+                   data
+                  });
+                }
+                else{
+                   res.json({
+                       msg: 'there is a running pool at the moment',
+                       status: false
+                   });
+                }
+        }
             
     } catch (error) {
         console.log(error);
