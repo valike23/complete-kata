@@ -5,6 +5,7 @@
   let pool = {};
   let club = {};
   let judges = [];
+  let result ={};
   let athletes = [];
   let athlete = {};
   athlete.result = 0;
@@ -12,6 +13,66 @@
   let kata = "";
   athlete.category = {};
   let show = "";
+
+  const setup = function () {
+    let tempJudges = JSON.parse(JSON.stringify(judges));
+    let tempJudges2 = JSON.parse(JSON.stringify(judges));
+    let AAP = 0;
+    let TAP = 0;
+    let isComplete = false;
+    for (let index = 0; index < judges.length; index++) {
+      const element = judges[index];
+      if (element.athletic_performance == undefined) {
+        isComplete = false;
+        break;
+      } else {
+        isComplete = true;
+      }
+    }
+    judges.forEach((j) => {
+      console.log(j.technical_performance, j.athletic_performance);
+      TAP += j.technical_performance;
+      AAP += j.athletic_performance;
+    });
+
+    console.log(AAP, TAP);
+    if (isComplete) {
+      //submit = true;
+      tempJudges.sort((a, b) => {
+        return a.technical_performance - b.technical_performance;
+      });
+      let lowestTP = tempJudges[0];
+      let highestTP = tempJudges[4];
+      console.log("lowest TP", lowestTP);
+      console.log("highest TP", highestTP);
+      tempJudges2.sort((a, b) => {
+        return a.athletic_performance - b.athletic_performance;
+      });
+      let lowestAP = tempJudges2[0];
+      let highestAP = tempJudges2[4];
+      console.log("lowest AP", lowestAP);
+      console.log("highest AP", highestAP);
+      const tpl = "tp" + lowestTP.id;
+      const tph = "tp" + highestTP.id;
+      const apl = "ap" + lowestAP.id;
+      const aph = "ap" + highestAP.id;
+      console.log(tpl, tph, apl, aph);
+      try {
+        document.getElementById(tpl).style.color = "red";
+      document.getElementById(tph).style.color = "red";
+      document.getElementById(apl).style.color = "red";
+      document.getElementById(aph).style.color = "red"; 
+      } catch (error) {
+        console.log(error);
+        
+      }
+      
+      
+    } else {
+      totalTech = AAP / judges.length;
+      totalAth = TAP / judges.length;
+    }
+  };
   onMount(() => {
     win = window;
     console.log(window);
@@ -67,13 +128,14 @@
         athletes = athletes;
       } catch (error) {}
     });
-    socket.on("result", async (result) => {
+    socket.on("result", async (data) => {
       show = "result";
-      console.log(result);
-      pool = result.pool;
-      athlete = result.athlete;
-      judges = result.judges;
-      result = result.score;
+      console.log(data);
+      pool = data.pool;
+      athlete = data.athlete;
+      judges = data.judges;
+      result = data.score;
+      setup();
       try {
         let data = await axios.get("api/club?id=" + athlete.clubId);
         if (data) {
@@ -261,26 +323,24 @@
     </div>
     <div class="mt-5">
       <span class="s-h3 soft-border">TEC</span>
-      <span class="s-h3 soft-border s-border">7.4</span>
-      <span class="s-h3 soft-border s-border">7.3</span>
-      <span class="s-h3 soft-border s-border">8.0</span>
-      <span class="s-h3 soft-border s-border">8.2</span>
-      <span class="s-h3 soft-border s-border">8.4</span>
-      <span class="s-h3 soft-border"> 21.5 x 0.7% : 14.7</span>
+      {#each judges as judge}
+        
+      <span id={"tp" + judge.id}  class="s-h3 soft-border s-border">{judge.technical_performance || ""}</span>
+      {/each}
+      <span class="s-h3 soft-border"> {result.TEC / 0.7} x 0.7% : {result.TEC}</span>
     </div>
     <div class="mt-2">
       <span class="s-h3 soft-border">ATH</span>
-      <span class="s-h3 soft-border s-border">7.4</span>
-      <span class="s-h3 soft-border s-border">7.3</span>
-      <span class="s-h3 soft-border s-border">8.0</span>
-      <span class="s-h3 soft-border s-border">8.2</span>
-      <span class="s-h3 soft-border s-border">8.4</span>
-      <span class="s-h3 soft-border"> 21.5 x 0.3% : 11.7</span>
+     {#each judges as judge}
+     <span id={"ap" + judge.id} class="s-h3 soft-border s-border">{judge.athletic_performance || ""}</span>
+     {/each}
+     
+      <span class="s-h3 soft-border"> {result.ATH / 0.3} x 0.3% : {result.ATH}</span>
     </div>
     <div class="row">
       <div class="cell-12">
         <h1 class="text-right" style="color:whitesmoke">
-          { 'kata to be performed'}
+          { athlete.pool_entries.kata}
         </h1>
       </div>
     </div>
