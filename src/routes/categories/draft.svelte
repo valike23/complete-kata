@@ -89,7 +89,7 @@ import {goto} from "@sapper/app";
   };
   const generatePool = () => {
     for (let index = 0; index < totalPools; index++) {
-      pools.push({ poolName: name + " " + "pool" + (index + 1), entries: [] });
+      pools.push({ poolName: name + " " + "R1-G" + (index + 1), entries: [] });
     }
   };
   const switchseed = (seedNumber) => {

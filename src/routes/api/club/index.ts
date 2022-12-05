@@ -51,8 +51,14 @@ export async function post(req, res) {
 
 export async function get(req, res){
     try {
-        const resp = await getAllClub();
+        if(req.query.id){
+            const resp = await Club.findOne({where:{id: req.query.id}});
+            res.json(resp);
+        }
+        else{
+            const resp = await getAllClub();
         res.json(resp);
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json(error);

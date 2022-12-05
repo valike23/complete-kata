@@ -78,6 +78,7 @@ console.log('pool entries', pool.entries);
       athlete: controller.currentAthlete,
       pool: fakePool,
     });
+    
   };
   let result = 0;
 
@@ -148,6 +149,12 @@ console.log('pool entries', pool.entries);
       ATH: totalAth * 0.3,
       TEC: totalTech * 0.7
     };
+    socket.emit("result", {
+      athlete: controller.currentAthlete,
+      judges: judges,
+      score: body,
+      pool: fakePool,
+    });
     const form = new FormData();
     form.append('body', JSON.stringify(body));
     try {

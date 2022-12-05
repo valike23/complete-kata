@@ -324,7 +324,7 @@
         <div class="col-4">
           <img
             class="img-fluid"
-            src="katabg.png"
+            src="images/HAWKtm.png"
             alt="state-flag"
             width="500"
           />
