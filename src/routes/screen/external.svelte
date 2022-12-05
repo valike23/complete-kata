@@ -11,7 +11,7 @@
   athlete.club = {};
   let kata = "";
   athlete.category = {};
-  let show = "result";
+  let show = "";
   onMount(() => {
     win = window;
     console.log(window);
