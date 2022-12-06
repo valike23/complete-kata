@@ -63,6 +63,9 @@
 <h2>Pool Name: {pool.poolName}</h2>
 <div class="row">
     <div class="cell-12">
+        {#if pool.status == 2}
+        <a href="pools/result"  class="button primary float-right">Go To Result</a>
+        {/if}
    
       <button on:click={generate}  class="button primary float-right">Generate record</button>
     
