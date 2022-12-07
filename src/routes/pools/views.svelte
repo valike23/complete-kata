@@ -64,7 +64,7 @@
 <div class="row">
     <div class="cell-12">
         {#if pool.status == 2}
-        <a href="pools/result"  class="button primary ">Go To Result</a>
+        <a href="pools/result?id={pool.id}"  class="button primary ">Go To Result</a>
         {/if}
    
       <button on:click={generate}  class="button primary float-right">Generate record</button>
