@@ -66,9 +66,9 @@
              <td>{judge.TEC}</td>
              <td>{judge.ATH}</td>
              {/each}
-             <td>{entry.TEC}</td>
-             <td>{entry.ATH}</td>
-             <td>{entry.total}</td>
+             <td>{(entry.TEC).toFixed(2)}</td>
+             <td>{(entry.ATH).toFixed(2)}</td>
+             <td>{(entry.total).toFixed(2)}</td>
                
               
             </tr>
