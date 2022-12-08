@@ -16,6 +16,7 @@ export async function post(req, res) {
 export async function get(req, res) {
   try {
     const judges = await Judge.findAll();
+    console.log(judges);
     res.json(judges)
 
 

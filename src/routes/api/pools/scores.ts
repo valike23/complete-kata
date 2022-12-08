@@ -1,4 +1,4 @@
-import type { Ientry } from "../../../Controllers/entries";
+
 import { EpoolStatus, IpoolEntries, Pool, poolEntries, poolEntriesJudge } from "../../../Controllers/pools";
 
 //uploading an athlete final result
