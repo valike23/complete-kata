@@ -23,12 +23,15 @@ export async function patch (req, res){
         let body = JSON.parse(req.fields.judge);
       
         let poolEntry = await poolEntries.findOne({where:{poolId: body.poolId, entryId: body.entryId}});
-       
+       if(poolEntry){
+        console.log('a polymer test: ',poolEntry);
         body.poolEntryId = poolEntry["id"];
         console.log(body);
         let poolEntryJudge = await poolEntriesJudge.update({ATH: body.ATH, TEC: body.TEC},
             {where:{poolEntryId: body.poolEntryId,judgeId: body.judgeId}});
         res.json(poolEntryJudge);
+       }
+       
     } catch (error) {
         console.log(error);
         res.status(503).json(error);
