@@ -5,3 +5,4 @@ yarn-error.log
 /__sapper__/
 /static/app/club/*
 /static/app/competition/*
+static/test.html

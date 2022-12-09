@@ -5,7 +5,7 @@
   let pool = {};
   let club = {};
   let judges = [];
-  let result ={};
+  let result = {};
   let athletes = [];
   let athlete = {};
   athlete.result = 0;
@@ -59,15 +59,12 @@
       console.log(tpl, tph, apl, aph);
       try {
         document.getElementById(tpl).style.color = "red";
-      document.getElementById(tph).style.color = "red";
-      document.getElementById(apl).style.color = "red";
-      document.getElementById(aph).style.color = "red"; 
+        document.getElementById(tph).style.color = "red";
+        document.getElementById(apl).style.color = "red";
+        document.getElementById(aph).style.color = "red";
       } catch (error) {
         console.log(error);
-        
       }
-      
-      
     } else {
       totalTech = AAP / judges.length;
       totalAth = TAP / judges.length;
@@ -146,6 +143,11 @@
         console.log(error);
       }
     });
+    socket.on("end of pool", async (data)=>{
+      //load all results from this pool
+      // follow the rule 2 entries switch show = "final";
+      console.log('data', data);
+    })
   });
 </script>
 
@@ -324,24 +326,108 @@
     <div class="mt-5">
       <span class="s-h3 soft-border">TEC</span>
       {#each judges as judge}
-        
-      <span id={"tp" + judge.id}  class="s-h3 soft-border s-border">{judge.technical_performance || ""}</span>
+        <span id={"tp" + judge.id} class="s-h3 soft-border s-border"
+          >{judge.technical_performance || ""}</span
+        >
       {/each}
-      <span class="s-h3 soft-border"> {result.TEC / 0.7} x 0.7% : {result.TEC}</span>
+      <span class="s-h3 soft-border">
+        {result.TEC / 0.7} x 0.7% : {result.TEC}</span
+      >
     </div>
     <div class="mt-2">
       <span class="s-h3 soft-border">ATH</span>
-     {#each judges as judge}
-     <span id={"ap" + judge.id} class="s-h3 soft-border s-border">{judge.athletic_performance || ""}</span>
-     {/each}
-     
-      <span class="s-h3 soft-border"> {result.ATH / 0.3} x 0.3% : {result.ATH}</span>
+      {#each judges as judge}
+        <span id={"ap" + judge.id} class="s-h3 soft-border s-border"
+          >{judge.athletic_performance || ""}</span
+        >
+      {/each}
+
+      <span class="s-h3 soft-border">
+        {result.ATH / 0.3} x 0.3% : {result.ATH}</span
+      >
     </div>
     <div class="row">
       <div class="cell-12">
         <h1 class="text-right" style="color:whitesmoke">
-          { athlete.pool_entries.kata}
+          {athlete.pool_entries.kata}
         </h1>
+      </div>
+    </div>
+  </div>
+{:else if show == "final"}
+  <div class="container mb-4 pb-4">
+    <div style="background-color: gray;" class="row mt-5">
+      <div class="cell-12">
+        <h1>{"pool.poolName"}</h1>
+      </div>
+   
+    </div>
+    <div class="row border mt-2">
+      <div class="cell-7"></div>
+      <div class="cell-5 text-center">
+        <div class="row">
+          <div class="cell-4 border">
+            <h1>TEC</h1>
+          </div>
+          <div class="cell-4 border">
+            <h1>ATH</h1>
+          </div>
+          <div class="cell-4 border">
+          <h1>TOTAL</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell-7 text-center">
+        <h1>Tobi Mark Smith</h1>
+      </div>
+      <div class="cell-5">
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell-7 bg-red fg-white text-center">
+        <h1>Lagos State</h1>
+      </div>
+      <div class="cell-5 text-center">
+        <div class="row">
+          <div class="cell-4 border">
+            <h1>18.1</h1>
+          </div>
+          <div class="cell-4 border">
+            <h1>6.1</h1>
+          </div>
+          <div class="cell-4 border">
+            <h1>22.2</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell-7 text-center">
+        <h1>Obodo Mike Smith</h1>
+      </div>
+      <div class="cell-5">
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="cell-7 bg-blue fg-white text-center">
+        <h1>Katsina State</h1>
+      </div>
+      <div class="cell-5 text-center">
+        <div class="row">
+          <div class="cell-4 border">
+            <h1>18.1</h1>
+          </div>
+          <div class="cell-4 border">
+            <h1>6.1</h1>
+          </div>
+          <div class="cell-4 border">
+            <h1>22.2</h1>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -394,7 +480,12 @@
         </div>
       </div>
       <div class="col-4">
-        <img class="img-fluid" src="images/HAWKtm.png" alt="state-flag" width="500" />
+        <img
+          class="img-fluid"
+          src="images/HAWKtm.png"
+          alt="state-flag"
+          width="500"
+        />
       </div>
       <div class="col-4">
         <div class="pr-4 text-right" style="border-right: 1px solid red;">
@@ -425,16 +516,15 @@
   .qrcode {
     width: 100px;
   }
-  .s-border{
+  .s-border {
     border-left: 2px solid white;
     border-right: 2px solid white;
-    
   }
-  .soft-border{
+  .soft-border {
     padding-left: 12px;
     padding-right: 12px;
   }
-  .s-h3{
+  .s-h3 {
     font-size: 25px;
     font-weight: 500;
   }

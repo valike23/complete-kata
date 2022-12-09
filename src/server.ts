@@ -41,6 +41,10 @@ io.of('/display').on('connection', (socket: Socket) => {
 	socket.on('result', (data) => {
 
 		socket.broadcast.emit('result', data);
+	});
+	socket.on('end of pool', (data) => {
+
+		socket.broadcast.emit('end of pool', data);
 	})
 
 });

@@ -5,7 +5,7 @@
     export async function preload(page, session) {
         const res = await this.fetch(`api/pools`);
         const pools = await res.json();
-
+console.log(pools);
         return { pools };
     }
 </script>

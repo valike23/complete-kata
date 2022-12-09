@@ -21,17 +21,86 @@
       let entries = [];
       let clubs = clubsResp.body;
       console.log(clubs);
+      const setup = function (judges) {
+        let result = 1;
+        let totalAth = 1;
+        let totalTech = 1;
+    let tempJudges = JSON.parse(JSON.stringify(judges));
+    let tempJudges2 = JSON.parse(JSON.stringify(judges));
+    let AAP = 0;
+    let TAP = 0;
+    let isComplete = false;
+    for (let index = 0; index < judges.length; index++) {
+      const element = judges[index];
+      if (element.athletic_performance == undefined) {
+        isComplete = false;
+        break;
+      } else {
+        isComplete = true;
+      }
+    }
+    judges.forEach((j) => {
+      console.log(j.technical_performance, j.athletic_performance);
+      TAP += j.technical_performance;
+      AAP += j.athletic_performance;
+    });
 
+    console.log(AAP, TAP);
+    if (isComplete) {
+      submit = true;
+      tempJudges.sort((a, b) => {
+        return a.technical_performance - b.technical_performance;
+      });
+      let lowestTP = tempJudges[0];
+      let highestTP = tempJudges[4];
+      console.log("lowest TP", lowestTP);
+      console.log("highest TP", highestTP);
+      tempJudges2.sort((a, b) => {
+        return a.athletic_performance - b.athletic_performance;
+      });
+      let lowestAP = tempJudges2[0];
+      let highestAP = tempJudges2[4];
+      console.log("lowest AP", lowestAP);
+      console.log("highest AP", highestAP);
+      const tpl = "tp" + lowestTP.id;
+      const tph = "tp" + highestTP.id;
+      const apl = "ap" + lowestAP.id;
+      const aph = "ap" + highestAP.id;
+      console.log(tpl, tph, apl, aph);
+      try {
+        document.getElementById(tpl).style.color = "red";
+      document.getElementById(tph).style.color = "red";
+      document.getElementById(apl).style.color = "red";
+      document.getElementById(aph).style.color = "red";
+      } catch (error) {
+        
+      }
+
+      AAP =
+        AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
+      TAP =
+        TAP - highestTP.technical_performance - lowestTP.technical_performance;
+      totalAth = AAP;
+      totalTech = TAP;
+      result = totalAth * 0.3 + totalTech * 0.7;
+    
+    } else {
+      totalTech = AAP / judges.length;
+      totalAth = TAP / judges.length;
+    }
+    return {totalAth, totalTech, result}
+  };
       const transform =()=>{
        
         let result =[];
         pool.entries.forEach((element , i)=> {
+            const {totalAth, totalTech, result} = setup(element.pool_entries.judges);
             let entry = {name: element.name, kata: element.pool_entries.kata,
                  club: clubs.find((club)=>{
                     return club.id == element.clubId
                  }),
-                judges: element.pool_entries.judges, TEC: element.pool_entries.TEC, ATH: element.pool_entries.ATH
-            , total: element.pool_entries.total};
+                judges: element.pool_entries.judges, TEC: element.pool_entries.TEC || totalTech, ATH: element.pool_entries.ATH || totalAth
+            , total: element.pool_entries.total || result};
             result.push(entry);
         });;
         console.log('sure', result);
