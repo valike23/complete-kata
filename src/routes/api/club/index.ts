@@ -89,3 +89,15 @@ export async function del(req, res) {
        res.status(503).json(error);
     }
 }
+
+export async function patch(req, res){
+    try {
+        const body = JSON.parse(req.fields.body);
+        const resp = await Club.update(body, {where:{id: req.query.id}});
+        console.log(resp);
+        res.json(resp);
+    } catch (error) {
+        console.log(error);
+        res.status(503).json(error);
+    }
+}

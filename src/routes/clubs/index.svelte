@@ -68,6 +68,25 @@
     } catch (error) {}
   };
 
+  const switchName =(club, i)=>{
+    clubs[i].edit = true;
+ }
+ const updateClubName =async (club, i)=>{
+    clubs[i].edit = false;
+    console.log(clubs[i]);
+
+    try {
+        let form = new FormData();
+        form.append('body',JSON.stringify({clubName:clubs[i].clubName}));
+        const resp = await axios.patch('api/club?id=' + clubs[i].id, form);
+        if(resp){
+            handleNotification(window,'update successful', EnotificationType.SUCCESS);
+        }
+    } catch (error) {
+        
+        handleNotification(window,'update failed', EnotificationType.ERROR);
+    }
+ }
 </script>
 
 <svelte:head>
@@ -95,11 +114,18 @@
               <th style="color:white">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {#each clubs as club, i}
               <tr>
                 <td>{i + 1}</td>
-                <td>{club.clubName}</td>
+                 {#if !club.edit}
+                               <!-- svelte-ignore a11y-click-events-have-key-events -->
+                               <td  on:click={()=>{switchName(club,i)}}>{club.clubName}</td>
+                               {:else}
+                               <!-- svelte-ignore a11y-click-events-have-key-events -->
+                               <td><input on:blur={()=>{updateClubName(club,i)}} bind:value={clubs[i].clubName}/></td>
+                               {/if}
                 <td>{club.createdAt}</td>
                 <td
                   ><img

@@ -95,6 +95,7 @@ console.log('new activation', entries);
                             <th style="color:white">Actions</th>
                         </tr>
                     </thead>
+                    
                     <tbody>
                         {#each entries as entry, i}
                             <tr>

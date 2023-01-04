@@ -106,6 +106,25 @@
       );
     }
   };
+  const updateCategoryName =async (category, i)=>{
+    categories[i].edit = false;
+    console.log(categories[i]);
+
+    try {
+        let form = new FormData();
+        form.append('body',JSON.stringify({categoryName:categories[i].categoryName}));
+        const resp = await axios.put('api/category?id=' + categories[i].id, form);
+        if(resp){
+            handleNotification(window,'update successful', EnotificationType.SUCCESS);
+        }
+    } catch (error) {
+        
+        handleNotification(window,'update failed', EnotificationType.ERROR);
+    }
+ }
+ const switchName =(category, i)=>{
+    categories[i].edit = true;
+ }
 </script>
 
 <svelte:head>
@@ -180,7 +199,13 @@
             {#each categories as category, i}
               <tr>
                 <td>{i + 1}</td>
-                <td>{category.categoryName}</td>
+                {#if !category.edit}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td  on:click={()=>{switchName(category,i)}}>{category.categoryName}</td>
+                {:else}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td><input on:blur={()=>{updateCategoryName(category,i)}} bind:value={categories[i].categoryName}/></td>
+                {/if}
                 <td>{category.createdAt}</td>
                 <td>{category.gender}</td>
 
@@ -201,7 +226,7 @@
                     class="button alert square "
                     title="destroy this category"
                   >
-                    <span class="mif-bin" />
+                    <span on:keypress={()=>{deleteCategory(category)}} on:click={()=>{deleteCategory(category)}} class="mif-bin" />
                   </button>
                 </td>
               </tr>
