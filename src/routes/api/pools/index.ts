@@ -110,3 +110,14 @@ export async function patch(req, res){
         res.status(503).json(error)
     }
 }
+
+export async function del(req, res) {
+    try {
+     const resp = await Pool.destroy({where:{id: req.query.id}});
+     console.log(resp);
+     res.json(resp);
+    } catch (error) {
+        console.log(error);
+       res.status(503).json(error);
+    }
+}

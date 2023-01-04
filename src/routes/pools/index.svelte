@@ -20,7 +20,31 @@ console.log(pools);
     } from "../../functions/browserFunctions";
     export let pools;
 
-    const deletePool = (pool) => {};
+    const deletePool = async (pool) => {
+        try {
+      if (!confirm(`you are about to delete this pool ${pool.poolName}. Remember this is an irrevisersible change`)) return;
+      const resp = await axios.delete("api/pools?id=" + pool.id);
+      if (resp) {
+        console.log(resp);
+        handleNotification(
+          window,
+          "pool deleted successfully",
+          EnotificationType.SUCCESS
+        );
+        pools.forEach((element, i) => {
+          if (element.id == pool.id) pools.splice(i, 1);
+        });
+        pools = pools;
+      }
+    } catch (error) {
+        console.log(error);
+      handleNotification(
+        window,
+        "oops!!! something went wrong",
+        EnotificationType.ERROR
+      );
+    }
+    };
     const viewPool = (pool) => {
         goto("pools/views?id=" + pool.id);
     };
@@ -190,6 +214,7 @@ console.log(pools);
                             </button>
                                 {/if}
                                 <button
+                                title="delete pool"
                                     on:click={() => {
                                         deletePool(pool);
                                     }}
