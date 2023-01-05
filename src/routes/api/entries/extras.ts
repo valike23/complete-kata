@@ -1,5 +1,6 @@
 import { Entry, Ientry } from "../../../Controllers/entries";
 
+
 // update an entry record the club and name 
 export async function put(req, res){
 try {
