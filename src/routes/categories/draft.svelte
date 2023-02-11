@@ -210,6 +210,7 @@ import {goto} from "@sapper/app";
 
 <div class="h-100 container-fluid">
   <TopBar />
+ 
   <h2>Pool Draft</h2>
   <p>category: {name}</p>
 
