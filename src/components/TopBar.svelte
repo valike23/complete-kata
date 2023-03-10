@@ -31,7 +31,7 @@
     </button>
     <button
       on:click={() => {
-        nav("/category");
+        nav("/categories");
       }}
       class="shortcut"
     >
