@@ -116,7 +116,7 @@
 </svelte:head>
 <div class="container-fluid h-100">
   <!-- svelte-ignore missing-declaration -->
-  <TopBar />
+  <TopBar ctive="entries"/>
   <h1>Add Competitor</h1>
   <div class="container">
     <div class="row">

@@ -58,7 +58,7 @@
 
 
 <div class="h-100 container-fluid">
-<TopBar/>
+<TopBar active="pools"/>
 
 <h2>Pool Name: {pool.poolName}</h2>
 <div class="row">

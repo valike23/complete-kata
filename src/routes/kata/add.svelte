@@ -96,7 +96,7 @@
 </svelte:head>
 <div class="container-fluid h-100">
   <!-- svelte-ignore missing-declaration -->
-  <TopBar />
+  <TopBar active="kata"/>
   <h1>Add kata</h1>
   <div class="container">
     <div class="row">

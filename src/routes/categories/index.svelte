@@ -132,7 +132,7 @@
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar />
+  <TopBar active="categories"/>
   <h1>Categories</h1>
   <div class="container">
     <div class="row cell-12 mb-5">

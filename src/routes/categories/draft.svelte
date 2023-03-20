@@ -209,7 +209,7 @@ import {goto} from "@sapper/app";
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar />
+  <TopBar active="categories"/>
  
   <h2>Pool Draft</h2>
   <p>category: {name}</p>

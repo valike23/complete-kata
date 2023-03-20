@@ -133,7 +133,7 @@ console.log(pools);
 </svelte:head>
 
 <div class="h-100 container-fluid">
-    <TopBar />
+    <TopBar active="pools"/>
 
     <h1>Manage Pools</h1>
 

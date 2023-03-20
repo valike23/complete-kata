@@ -63,7 +63,7 @@
   </svelte:head>
   <div class="container-fluid h-100">
       <!-- svelte-ignore missing-declaration -->
-      <TopBar/>
+      <TopBar ctive="clubs"/>
       <h1>Add club</h1>
       <div class="container">
           <div>

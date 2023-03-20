@@ -94,7 +94,7 @@
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar />
+  <TopBar ctive="clubs"/>
   <h1>Manage club</h1>
   <div class="container">
     <div class="row cell-12 mb-5 pr-5">

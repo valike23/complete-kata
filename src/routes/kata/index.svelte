@@ -46,7 +46,7 @@ const deleteKata =async (kata)=>{
 
 <div class="h-100 container-fluid">
  <!-- svelte-ignore missing-declaration -->
- <TopBar/>
+ <TopBar active="kata"/>
     <h1>Manage Katas</h1>
     <div class="container">
       <div class="row">

@@ -7,6 +7,7 @@
   let fileName = "";
   let url ='';
   let win;
+  let active = "competition";
   let name = "";
 
 const readFile =(files)=>{
@@ -63,7 +64,7 @@ const submit =async ()=>{
 </svelte:head>
 <div class="container-fluid h-100">
     <!-- svelte-ignore missing-declaration -->
-    <TopBar/>
+    <TopBar {active}/>
     <h1>Add Competition</h1>
     <div class="container">
         <div>

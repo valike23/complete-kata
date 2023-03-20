@@ -71,7 +71,7 @@ console.log('new activation', entries);
 
 <div class="h-100 container-fluid">
  <!-- svelte-ignore missing-declaration -->
- <TopBar/>
+ <TopBar active="entries"/>
     <h1>Manage Entries</h1>
     <div class="container">
       <div class="row">

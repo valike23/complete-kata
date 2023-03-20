@@ -127,7 +127,7 @@
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar />
+  <TopBar active="pools"/>
   <div class="row mb-3">
     <div class="cell">
       <button on:click={download} class="button primary">
