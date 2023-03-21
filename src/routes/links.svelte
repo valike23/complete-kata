@@ -24,7 +24,7 @@ export let ips;
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar />
+  <TopBar active="links"/>
   <h1>Manage Links</h1>
 
   <div class="row">

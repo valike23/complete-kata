@@ -43,7 +43,9 @@
       }}
       class="shortcut bg-teal fg-white"
     >
-      <span class="caption">Category</span>
+      <span class="caption tight"><small>Category
+        <br>
+         draft pools</small></span>
       <span class="mif-stack  icon" />
     </button>
     <button
@@ -80,7 +82,7 @@
       }}
       class="shortcut bg-teal fg-white"
     >
-      <span class="caption">External</span>
+      <span class="caption"> MAT TV </span>
       <span class="mif-laptop  icon" />
     </button>
     <button
@@ -100,6 +102,16 @@
     >
       <span class="caption">Judges</span>
       <span class="mif-tablet  icon" />
+    </button>
+    <button
+    class:active={active == 'links'}
+      on:click={() => {
+        nav("/links");
+      }}
+      class="shortcut bg-teal fg-white"
+    >
+      <span class="caption">Links</span>
+      <span class="mif-link  icon" />
     </button>
     <button 
       on:click={() => {
