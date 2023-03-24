@@ -11,7 +11,7 @@
   </script>
 
 <script>
-  import TopBar from "../components/TopBar.svelte";
+  import TopBar from "../../components/TopBar.svelte";
   import axios from "axios";
   let judge ={
     judgeName: '',
@@ -20,7 +20,7 @@
   import {
     EnotificationType,
     handleNotification,
-  } from "../functions/browserFunctions";
+  } from "../../functions/browserFunctions";
   export let judges = [];
   let loading = false;
   const submit = async () => {
@@ -53,6 +53,27 @@
       );
     }
   };
+  const updatePassword =async (judge, i)=>{
+    judges[i].edit = false;
+    console.log(judges[i]);
+
+    try {
+        let form = new FormData();
+        console.log('password',judges[i].password);
+        form.append('body', judges[i].password);
+        
+        const resp = await axios.patch('api/judges?id=' + judges[i].id, form);
+        if(resp){
+            handleNotification(window,'update successful', EnotificationType.SUCCESS);
+        }
+    } catch (error) {
+        console.log('the error here', error);
+        handleNotification(window,'update failed', EnotificationType.ERROR);
+    }
+ }
+ const switchPassword =( i)=>{
+    judges[i].edit = true;
+ }
 </script>
 
 <svelte:head>
@@ -60,7 +81,7 @@
   </svelte:head>
   
   <div class="h-100 container-fluid">
-    <TopBar />
+    <TopBar active="judges"/>
     <h1>Manage Judges</h1>
     <div class="container">
       <div class="row cell-12 mb-5">
@@ -115,6 +136,7 @@
               <tr style="color: white">
                 <th style="color:white">#</th>
                 <th style="color:white">Judge Name</th>
+                <th style="color:white">Judge Password</th>
                 <th class="" style="color:white">created Date</th>
                 <th style="color:white">Actions</th>
               </tr>
@@ -124,6 +146,13 @@
                 <tr>
                   <td>{i + 1}</td>
                   <td>{judge.judgeName}</td>
+                  {#if !judge.edit}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td  on:click={()=>{switchPassword(i)}}>{judge.password}</td>
+                {:else}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <td><input on:blur={()=>{updatePassword(judge,i)}} bind:value={judges[i].password}/></td>
+                {/if}
                   <td>{judge.createdAt}</td>
   
                   <td>

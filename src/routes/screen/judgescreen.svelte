@@ -88,6 +88,10 @@
       });
     }
   };
+  const reset = () =>{
+    technicalPerformance = 0;
+    athleticPerformance = 0;
+  }
   let athlete;
   let win;
   onMount(() => {
@@ -265,7 +269,7 @@
         </div>
         <br />
         <div class="text-center justify-content-center row">
-          <div class="cell-6">
+          <div class="cell-4">
             <button
               type="button"
               on:click={submitScore}
@@ -274,13 +278,22 @@
               >Submit Score</button
             >&nbsp;&nbsp;
           </div>
+          <div class="cell-4 text-center">
+            <button
+              type="button"
+              on:click={reset}
+              class="btn btn-warning btn-block btn-lg btn btn-secondary"
+              style="height: 70px; font-size: 18px; font-weight: 600;"
+              >Reset</button
+            >&nbsp;&nbsp;
+          </div>
           <div class="float-right cell-4">
             <button
               type="button"
               on:click={disqualified}
               class="btn btn-danger btn-block btn btn-secondary"
               style="height: 70px; font-size: 18px; font-weight: 600;"
-              >Disqualify</button
+              >Dis-qualify</button
             >
           </div>
         </div>
@@ -383,12 +396,20 @@
       </div>
       <br />
       <div class="text-center justify-content-center row">
-        <div class="col-6">
+        <div class="col-4">
           <button
             type="button"
             class="btn btn-warning btn-block btn-lg btn btn-secondary"
             style="height: 70px; font-size: 18px; font-weight: 600;"
             >Submit Score</button
+          >&nbsp;&nbsp;
+        </div>
+        <div class="col-4">
+          <button
+            type="button"
+            class="btn btn-warning btn-block btn-lg btn btn-secondary"
+            style="height: 70px; font-size: 18px; font-weight: 600;"
+            >Reset</button
           >&nbsp;&nbsp;
         </div>
         <div class="float-right col-4">
