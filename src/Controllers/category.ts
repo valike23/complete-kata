@@ -5,7 +5,7 @@ import { Pool } from "./pools";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: '../../sqlite/test.db'
+    storage: 'sqlite/test.db'
   });
 export interface Icategory {
     id?: number;
@@ -13,6 +13,7 @@ export interface Icategory {
     gender?: string;
     competitionId?: number;
     isDrafted?: boolean;
+    round?: number;
     entries?: Ientry[];
     createdAt?: Date;
     updatedAt?: Date;
@@ -20,6 +21,7 @@ export interface Icategory {
   export class Category extends Model {
     declare id: number;
     declare categoryName: string;
+    declare round: number;
     declare isDrafted: boolean;
     declare competitionId: number;
     declare gender: string
@@ -39,6 +41,11 @@ Category.init({
         unique: true
 
     },
+
+  round: {
+    type: DataTypes.SMALLINT,
+    defaultValue: 1
+  },
     competitionId:{
         type: DataTypes.BIGINT,
     },

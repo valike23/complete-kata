@@ -187,7 +187,7 @@
                     <p>{a.first_name + " " + a.last_name}</p>
                   </td>
                   <td class="align-middle text-center text-sm">
-                    <p>{a.result || 0}</p>
+                    <p>{Number(a.result).toFixed(2) || 0}</p>
                   </td>
                 </tr>
               {/each}
@@ -306,7 +306,7 @@
     </div>
     <div class="row">
       <div class="cell-2 red text-center">
-        <h1>{result.total}</h1>
+        <h1>{Number(result.total).toFixed(2)}</h1>
       </div>
       <div class="cell-7">
         <h1>{athlete.name || "test athlete name"}</h1>
@@ -331,7 +331,7 @@
         >
       {/each}
       <span class="s-h3 soft-border">
-        {result.TEC / 0.7} x 0.7% : {result.TEC}</span
+        {Number(result.TEC / 0.7).toFixed(2)} x 0.7% : {Number(result.TEC).toFixed(2)}</span
       >
     </div>
     <div class="mt-2">
@@ -343,7 +343,7 @@
       {/each}
 
       <span class="s-h3 soft-border">
-        {result.ATH / 0.3} x 0.3% : {result.ATH}</span
+        {Number(result.ATH / 0.3).toFixed(2)} x 0.3% : {Number(result.ATH).toFixed(2)}</span
       >
     </div>
     <div class="row">

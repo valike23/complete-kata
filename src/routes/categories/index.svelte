@@ -10,7 +10,7 @@
   }
 </script>
 
-<script>
+<script >
   import axios from "axios";
   import TopBar from "../../components/TopBar.svelte";
   import { goto } from "@sapper/app";
@@ -18,12 +18,37 @@
     EnotificationType,
     handleNotification,
   } from "../../functions/browserFunctions";
+  import { progressionAlgorithm } from "../../functions/severShared";
   export let resp;
   let categories = resp.categories;
   let loading = false;
   let category = {};
   let activeCompetition = resp.activeComp;
   console.log(categories);
+
+  const progress = async (category)=>{
+    handleNotification(window, 'resolving category', EnotificationType.INFO);
+    let pools = [];
+    pools = await (await (await axios.get('api/category/details?id=' + category.id)).data).pools;
+    console.log('pools are here for test',pools);
+    // filter the pools to only show the ones with the same round as the category
+    const workPools = [];
+    pools.forEach((pool)=>{
+      console.log('entered place 1');
+      if(pool.round == category.round) workPools.push(pool);
+
+    });
+
+    // loop through pools and check if there is any incomplete pool if any bounce back
+    workPools.forEach((pool2)=>{
+      console.log('entered place 2');
+      if(pool2.status !== 2) return handleNotification(window, 'some pools have not been completed', EnotificationType.ERROR);
+
+    });
+
+    progressionAlgorithm(workPools);
+
+  }
 
   const draftPools = async (category) => {
     if(category.isDrafted) return handleNotification(window,
@@ -222,6 +247,17 @@
                   >
                     <span class="mif-table" />
                   </button>
+                 {#if category.isDrafted}
+                 <button
+                 on:click={() => {
+                   progress(category);
+                 }}
+                 class="button secondary square "
+                 title="Progress Category"
+               >
+                 <span class="mif-forward" />
+               </button>
+                 {/if}
                   <button
                     class="button alert square "
                     title="destroy this category"

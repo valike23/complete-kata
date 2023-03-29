@@ -4,7 +4,7 @@ import { Entry } from "./entries";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: '../../sqlite/test.db'
+    storage: 'sqlite/test.db'
   });
 export interface Iclub {
     id?: number;
@@ -44,6 +44,7 @@ Club.init({
    
 },{sequelize, modelName: 'club'});
 Club.hasMany(Entry);
+
 Club.sync();
 
 export const addClub =async (club: Iclub): Promise<ImodelResp> =>{

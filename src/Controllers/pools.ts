@@ -4,7 +4,7 @@ import { Judge } from "./judges";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: '../../sqlite/test.db'
+    storage: 'sqlite/test.db'
   });
 export enum EpoolStatus {
   CREATED = 0,
@@ -18,6 +18,7 @@ export interface Ipool {
     poolName?: string;
     entries?: Ientry[];
     status?: EpoolStatus;
+    round?: number;
     competitionId?: number;
     categoryId?: number;
     createdAt?: Date;
@@ -34,6 +35,7 @@ export interface IpoolEntries {
 }
 export class Pool extends Model {
   declare id: number;
+  declare round: number;
   declare poolName: string;
   declare status: number;
   declare competitionId: number;
@@ -54,6 +56,10 @@ Pool.init({
       allowNull: false,
       
 
+  },
+  round: {
+    type: DataTypes.SMALLINT,
+    defaultValue: 1
   },
   categoryId:{
       type: DataTypes.BIGINT,
@@ -100,6 +106,7 @@ Pool.belongsToMany(Entry,{through: poolEntries});
 Entry.belongsToMany(Pool, {through: poolEntries});
 poolEntries.belongsToMany(Judge,{through: poolEntriesJudge});
 Judge.belongsToMany(poolEntries, {through: poolEntriesJudge});
+
 Pool.sync();
 poolEntries.sync();
 poolEntriesJudge.sync();

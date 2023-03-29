@@ -49,6 +49,16 @@
       <span class="mif-stack  icon" />
     </button>
     <button
+    class:active={active == 'clubs'}
+      on:click={() => {
+        nav("/clubs");
+      }}
+      class="shortcut bg-teal fg-white"
+    >
+      <span class="caption tight"> Clubs</span>
+      <span class="mif-flag  icon" />
+    </button>
+    <button
     class:active={active == 'entries'}
       on:click={() => {
         nav("/entries");
@@ -76,6 +86,15 @@
       <span class="caption">Show Pools</span>
       <span class="mif-apps  icon" />
     </button>
+    <button class:active={active == 'judges'}
+    on:click={() => {
+      nav("/judges");
+    }}
+    class="shortcut bg-teal fg-white"
+  >
+    <span class="caption"> <small>Manage <br> Judges</small></span>
+    <span class="mif-hammer  icon" />
+  </button>
     <button
       on:click={() => {
         ExternalWindow("/screen/external");

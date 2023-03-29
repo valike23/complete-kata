@@ -4,7 +4,7 @@ import { Category } from "./category";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: '../../sqlite/test.db'
+    storage: 'sqlite/test.db'
   });
 export interface Ientry {
     id?: number;

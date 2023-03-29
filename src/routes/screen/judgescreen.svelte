@@ -89,8 +89,8 @@
     }
   };
   const reset = () =>{
-    technicalPerformance = 0;
-    athleticPerformance = 0;
+    technicalPerformance = 7.0;
+    athleticPerformance = 7.0;
   }
   let athlete;
   let win;
