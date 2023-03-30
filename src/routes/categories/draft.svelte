@@ -195,6 +195,12 @@
     pool.sort(randomize);
     return pool;
   };
+  const randomizePools =()=>{
+    pools.forEach((pool, i)=>{
+      pools[i] = randomizePool(pool);
+
+    })
+  }
   const submitDraft = async () => {
     console.log(pools);
     let promises = [];
@@ -286,6 +292,11 @@
     </div>
     <div class="cell-9 pl-5">
       <div class="row mb-5">
+      {#if pools.length > 0}
+      <div>
+        <button on:click={randomizePools} class="button primary">randomize pools</button>
+      </div>
+      {/if}
         {#each pools as pool}
           <div class="cell-4">
             <div class="card">
