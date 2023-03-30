@@ -12,10 +12,10 @@
 </script>
 
 <script>
-    import axios from "axios";
+  import axios from "axios";
 
   import { onMount } from "svelte";
-import {goto} from "@sapper/app";
+  import { goto } from "@sapper/app";
   import TopBar from "../../components/TopBar.svelte";
   import {
     EnotificationType,
@@ -146,14 +146,13 @@ import {goto} from "@sapper/app";
             firstIndex = firstIndex + 1;
           }
         } else {
-         if(isOdd){
-          pools[firstIndex].entries.push(entry);
+          if (isOdd) {
+            pools[firstIndex].entries.push(entry);
             firstIndex = firstIndex + 1;
-         }
-         else{
-          pools[lastIndex].entries.push(entry);
-          lastIndex = lastIndex - 1;
-         }
+          } else {
+            pools[lastIndex].entries.push(entry);
+            lastIndex = lastIndex - 1;
+          }
         }
 
         if (lastIndex == firstIndex) {
@@ -180,27 +179,47 @@ import {goto} from "@sapper/app";
       pools = pools;
       disabled = false;
     }
+    pools.forEach((pool, i)=>{
+      pools[i] = randomizePool(pool);
+
+    })
   };
   generatePool();
-  const submitDraft =async ()=>{
+  const randomizePool = (pool) => {
+    // Define the randomizing function
+    function randomize(a, b) {
+      return Math.random() - 0.5;
+    }
+
+    // Shuffle the array
+    pool.sort(randomize);
+    return pool;
+  };
+  const submitDraft = async () => {
     console.log(pools);
-    let promises =[];
-    pools.forEach((pool)=>{
+    let promises = [];
+    pools.forEach((pool) => {
       pool.categoryId = id;
       let form = new FormData();
-      form.append('body',JSON.stringify(pool));
-      promises.push(axios.post('api/pools', form)); 
+      form.append("body", JSON.stringify(pool));
+      promises.push(axios.post("api/pools", form));
     });
-  const resp = await Promise.all(promises);
-  if(resp){
-    if(resp[0].data.status == 'success'){
-      handleNotification(window, 'upload successful', 
-      EnotificationType.SUCCESS,
-      ()=>{goto('/pools')}, goto);
+    const resp = await Promise.all(promises);
+    if (resp) {
+      if (resp[0].data.status == "success") {
+        handleNotification(
+          window,
+          "upload successful",
+          EnotificationType.SUCCESS,
+          () => {
+            goto("/pools");
+          },
+          goto
+        );
+      }
+      console.log(resp);
     }
-    console.log(resp);
-  }
-  }
+  };
   onMount(() => {});
 </script>
 
@@ -209,8 +228,8 @@ import {goto} from "@sapper/app";
 </svelte:head>
 
 <div class="h-100 container-fluid">
-  <TopBar active="categories"/>
- 
+  <TopBar active="categories" />
+
   <h2>Pool Draft</h2>
   <p>category: {name}</p>
 
@@ -291,9 +310,9 @@ import {goto} from "@sapper/app";
           >
         </div>
         <div class="cell-6">
-          <button {disabled}
-          on:click={submitDraft}
-           class="button large primary">Upload Draft</button>
+          <button {disabled} on:click={submitDraft} class="button large primary"
+            >Upload Draft</button
+          >
         </div>
       </div>
     </div>
