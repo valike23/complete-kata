@@ -193,7 +193,8 @@
     }
 
     // Shuffle the array
-    pool.sort(randomize);
+    pool.entries.sort(randomize);
+    console.log(pool);
     return pool;
   };
   const randomizePools =()=>{
