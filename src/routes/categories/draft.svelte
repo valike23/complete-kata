@@ -186,6 +186,7 @@
   };
   generatePool();
   const randomizePool = (pool) => {
+    console.log('pool to randomize', pool);
     // Define the randomizing function
     function randomize(a, b) {
       return Math.random() - 0.5;
