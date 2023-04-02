@@ -21,11 +21,14 @@
   import TopBar from "../components/TopBar.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
-  import { EnotificationType, handleNotification } from "../functions/browserFunctions";
+  import {
+    EnotificationType,
+    handleNotification,
+  } from "../functions/browserFunctions";
   export let pool,
     judges = [],
     judgesResp = [];
-    let poolEntryId = 0;
+  let poolEntryId = 0;
   let submit = false;
   let endofPool = false;
   let isFinal = false;
@@ -35,13 +38,13 @@
   console.log(pool);
   let totalAth = 0;
   let totalTech = 0;
-console.log('pool entries', pool.entries);
+  console.log("pool entries", pool.entries);
   let controller = new competitionController(pool.entries);
-  if(!controller.nextAthlete ){
-    controller.nextAthlete = {name: 'empty'};
+  if (!controller.nextAthlete) {
+    controller.nextAthlete = { name: "empty" };
   }
-  if(!controller.currentAthlete){
-    controller.currentAthlete = {name: 'empty'};
+  if (!controller.currentAthlete) {
+    controller.currentAthlete = { name: "empty" };
     endofPool = true;
   }
   const resetVariables = async () => {
@@ -50,7 +53,7 @@ console.log('pool entries', pool.entries);
         `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
       );
       if (resp) {
-        console.log('my judge data', resp);
+        console.log("my judge data", resp);
         poolEntryId = resp.data.id;
         let judgesResult = resp.data;
         for (let index = 0; index < judges.length; index++) {
@@ -78,7 +81,6 @@ console.log('pool entries', pool.entries);
       athlete: controller.currentAthlete,
       pool: fakePool,
     });
-    
   };
   let result = 0;
 
@@ -141,13 +143,13 @@ console.log('pool entries', pool.entries);
       totalAth = TAP / judges.length;
     }
   };
-  const upload =async ()=>{
-    let resp = confirm('do you want to upload the result?');
-    if(!resp) return;
-    let body =  {
+  const upload = async () => {
+    let resp = confirm("do you want to upload the result?");
+    if (!resp) return;
+    let body = {
       total: result,
       ATH: totalAth * 0.3,
-      TEC: totalTech * 0.7
+      TEC: totalTech * 0.7,
     };
     socket.emit("result", {
       athlete: controller.currentAthlete,
@@ -156,34 +158,53 @@ console.log('pool entries', pool.entries);
       pool: fakePool,
     });
     const form = new FormData();
-    form.append('body', JSON.stringify(body));
+    form.append("body", JSON.stringify(body));
     try {
-     let res= await axios.put('api/pools/scores?id='+ poolEntryId, form);
-     if(res){
-      handleNotification(window, 'scores uploaded successfully', EnotificationType.SUCCESS,()=>{location.reload()});
-      controller.updateNextEntry();
-      
-     }
+      let res = await axios.put("api/pools/scores?id=" + poolEntryId, form);
+      if (res) {
+        handleNotification(
+          window,
+          "scores uploaded successfully",
+          EnotificationType.SUCCESS,
+          () => {
+            location.reload();
+          }
+        );
+        controller.updateNextEntry();
+      }
     } catch (error) {
       console.error(error);
-      handleNotification(window,'something went wrong', EnotificationType.ERROR);
+      handleNotification(
+        window,
+        "something went wrong",
+        EnotificationType.ERROR
+      );
     }
-
-
-  }
+  };
   //console.log(pool.entries);
 
   onMount(async () => {
-    if(endofPool){
-      handleNotification(window, 'closing this pool...', EnotificationType.INFO);
+    if (endofPool) {
+      handleNotification(
+        window,
+        "closing this pool...",
+        EnotificationType.INFO
+      );
       try {
-        const resp = await axios.patch('api/pools/scores?id=' + fakePool.id);
-        if(resp){
-          handleNotification(window,'pool completed successfully',EnotificationType.SUCCESS,()=>{location('/pools')})
+        const resp = await axios.patch("api/pools/scores?id=" + fakePool.id);
+        if (resp) {
+          handleNotification(
+            window,
+            "pool completed successfully",
+            EnotificationType.SUCCESS,
+            () => {
+              location("/pools");
+            }
+          );
         }
       } catch (error) {
         console.log(error);
-        handleNotification(window, 'an error occured', EnotificationType.ERROR)
+        handleNotification(window, "an error occured", EnotificationType.ERROR);
       }
     }
     resetVariables();
@@ -278,12 +299,18 @@ console.log('pool entries', pool.entries);
       </table>
 
       <div class="row mt-4">
-        <div class="cell-3" >
-
-<input type="checkbox" data-style="2" bind:checked={isFinal}  data-role="checkbox" data-caption="is Final Bouth" data-indeterminate="true">
+        <div class="cell-3">
+          <input
+            type="checkbox"
+            data-style="2"
+            bind:checked={isFinal}
+            data-role="checkbox"
+            data-caption="is Final Bouth"
+            data-indeterminate="true"
+          />
         </div>
         <div class="cell-9 text-center">
-          <button disabled="{!submit}" class="button success" on:click={upload}
+          <button disabled={!submit} class="button success" on:click={upload}
             >upload to screen</button
           >
         </div>

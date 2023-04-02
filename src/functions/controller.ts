@@ -37,7 +37,7 @@ export class competitionController {
             const element = entries[index];
             console.log('element',element);
             if(!setFirst){
-                if(element.pool_entries.status == 0){
+                if(element.pool_entries.status == 0 || element.pool_entries.status == 1){
                     
                     this.currentAthlete = element;
                     setFirst = true;
