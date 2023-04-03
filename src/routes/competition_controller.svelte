@@ -27,6 +27,7 @@
   } from "../functions/browserFunctions";
   export let pool,
     judges = [],
+    win = {},
     judgesResp = [];
   let poolEntryId = 0;
   let submit = false;
@@ -182,8 +183,57 @@
     }
   };
   //console.log(pool.entries);
+  const openJudgeScore =()=>{
+    let judgeList = ``;
+    console.log('the judges', judges);
+    judges.forEach(element => {
+      let text = `<option value="${element.id}"> ${element.judgeName}</option>`;
+      judgeList += text;
+    });
+    win.Metro.dialog.create({
+            title: "Use Windows location service?",
+            content: `<div class="container">
+              <div class="row">
+                <div class="col-12">
+                  <label>Judge</label>
+                  <select data-role="select">
+    <optgroup label="Judges">
+       
+      ${judgeList}
+    </optgroup>
+ 
+</select>
+              </div>
+                <div class="col-12">
+                  <label>Scores</label>
+                  <input type="number" id="test" data-role="input" value="7.0" min="0.0" max="10.0" step="0.2">
+              </div>
+                </div>
+              </div>`,
+            actions: [
+                {
+                    caption: "Agree",
+                    cls: "js-dialog-close alert",
+                    onclick: function(){
+                      const id = document.getElementById('test');
+                      console.log(id.value);
+                        alert("You clicked Agree action");
+                    }
+                },
+                {
+                    caption: "Disagree",
+                    cls: "js-dialog-close",
+                    onclick: function(){
+                        alert("You clicked Disagree action");
+                    }
+                }
+            ]
+        });
 
+  
+  }
   onMount(async () => {
+    win = window;
     if (endofPool) {
       handleNotification(
         window,
@@ -233,7 +283,8 @@
 <div class="h-100 container-fluid">
   <TopBar />
 
-  <h2>Competition Controller</h2>
+  <h2>Competition Controller  <button on:click={openJudgeScore} title="use this button to upload scores only when judges screen has an issue" 
+    class="float-right button primary">Input Scores</button></h2>
   <h3>Pool Name: {pool.poolName}</h3>
   <div class="row">
     <div class="cell">
@@ -318,6 +369,8 @@
     </div>
   </div>
 </div>
+
+
 
 <style>
   .small {
