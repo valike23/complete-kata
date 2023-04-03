@@ -6,4 +6,4 @@ yarn-error.log
 /static/app/club/*
 /static/app/competition/*
 static/test.html
-/sqlite/*
+/sqlite
