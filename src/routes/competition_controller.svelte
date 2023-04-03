@@ -191,12 +191,12 @@
       judgeList += text;
     });
     win.Metro.dialog.create({
-            title: "Use Windows location service?",
+            title: "Add Judges Result",
             content: `<div class="container">
               <div class="row">
                 <div class="col-12">
                   <label>Judge</label>
-                  <select data-role="select">
+                  <select id="judgeselect" data-role="select">
     <optgroup label="Judges">
        
       ${judgeList}
@@ -205,8 +205,12 @@
 </select>
               </div>
                 <div class="col-12">
-                  <label>Scores</label>
+                  <label>A.Performance</label>
                   <input type="number" id="test" data-role="input" value="7.0" min="0.0" max="10.0" step="0.2">
+              </div>
+              <div class="col-12">
+                  <label>T.Performance</label>
+                  <input type="number" id="tec" data-role="input" value="7.0" min="0.0" max="10.0" step="0.2">
               </div>
                 </div>
               </div>`,
@@ -216,7 +220,22 @@
                     cls: "js-dialog-close alert",
                     onclick: function(){
                       const id = document.getElementById('test');
-                      console.log(id.value);
+                      const tec = document.getElementById('tec');
+                      const judge = document.getElementById("judgeselect");
+                      console.log(id.value, tec.value);
+                      console.log(judge.value);
+                      judges.forEach((judge2, i)=>{
+                        console.log(judge2.id, judge.value );
+                        if(judge2.id == judge.value){
+                          console.log('we have a match');
+                          judges[i].technical_performance = Number(tec.value) ;
+                          judges[i].athletic_performance = Number(id.value);
+                          judges = judges;
+                          console.log(judges);
+                          return;
+                        }
+
+                      })
                         alert("You clicked Agree action");
                     }
                 },
@@ -267,6 +286,7 @@
       console.log(data);
       judges.forEach((judge, i) => {
         if (judge.id == data.judgeId) {
+
           judges[i].technical_performance = data.TEC;
           judges[i].athletic_performance = data.ATH;
         }
