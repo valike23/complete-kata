@@ -71,8 +71,29 @@
         handleNotification(window,'update failed', EnotificationType.ERROR);
     }
  }
+ const updateName =async (judge, i)=>{
+    judges[i].edit = false;
+    console.log(judges[i]);
+
+    try {
+        let form = new FormData();
+        console.log('judgeName',judges[i].judgeName);
+        form.append('body', judges[i].judgeName);
+        
+        const resp = await axios.patch('api/judges?id=' + judges[i].id, form);
+        if(resp){
+            handleNotification(window,'update successful', EnotificationType.SUCCESS);
+        }
+    } catch (error) {
+        console.log('the error here', error);
+        handleNotification(window,'update failed', EnotificationType.ERROR);
+    }
+ }
  const switchPassword =( i)=>{
     judges[i].edit = true;
+ }
+ const switchName =( i)=>{
+    judges[i].editName = true;
  }
 </script>
 
@@ -145,7 +166,13 @@
               {#each judges as judge, i}
                 <tr>
                   <td>{i + 1}</td>
-                  <td>{judge.judgeName}</td>
+                  {#if !judge.editName}
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  <td  on:click={()=>{switchName(i)}}>{judge.judgeName}</td>
+                  {:else}
+                  <!-- svelte-ignore a11y-click-events-have-key-events -->
+                  <td><input on:blur={()=>{updateName(judge,i)}} bind:value={judges[i].judgeName}/></td>
+                  {/if}
                   {#if !judge.edit}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <td  on:click={()=>{switchPassword(i)}}>{judge.password}</td>
