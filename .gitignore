@@ -7,3 +7,4 @@ yarn-error.log
 /static/app/competition/*
 static/test.html
 /sqlite/
+sqlite/test.db

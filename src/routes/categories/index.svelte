@@ -18,7 +18,7 @@
     EnotificationType,
     handleNotification,
   } from "../../functions/browserFunctions";
-  import { progressionAlgorithm } from "../../functions/severShared";
+  import { mergeArrays } from "../../functions/severShared";
   export let resp;
   let categories = resp.categories;
   let loading = false;
@@ -44,10 +44,10 @@
       console.log('entered place 2');
       if(pool2.status !== 2) return handleNotification(window, 'some pools have not been completed', EnotificationType.ERROR);
 
+      goto('categories/progress?id=' +  category.id + '&round=' + category.round + '&name='+  category.categoryName) ;
     });
-
-    progressionAlgorithm(workPools);
-
+    
+    console.log(mergeArrays(workPools));
   }
 
   const draftPools = async (category) => {
