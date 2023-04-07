@@ -4,7 +4,7 @@ import { Judge } from "./judges";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: 'sqlite/test.db'
+    storage: 'test.db'
   });
 export enum EpoolStatus {
   CREATED = 0,

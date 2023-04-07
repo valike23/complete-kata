@@ -5,7 +5,7 @@ import { Pool } from "./pools";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: 'sqlite/test.db'
+    storage: 'test.db'
   });
 export interface Icategory {
     id?: number;

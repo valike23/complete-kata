@@ -2,7 +2,7 @@ import { DataTypes, Model, Sequelize } from "sequelize";
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: 'sqlite/test.db'
+    storage: 'test.db'
   });
 
   export interface Ijudge {

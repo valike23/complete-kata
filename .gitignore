@@ -8,3 +8,4 @@ yarn-error.log
 static/test.html
 /sqlite/
 sqlite/test.db
+test.db
