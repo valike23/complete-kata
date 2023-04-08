@@ -1,8 +1,8 @@
 <script>
   import axios from "axios";
   import { onMount } from "svelte";
-  let athleticPerformance = 7.0;
-  let technicalPerformance = 7.0;
+  let athleticPerformance = 5.0;
+  let technicalPerformance = 5.0;
   let judge = {};
   let socket;
   let isLogged = false;
@@ -29,8 +29,8 @@
             text: "scores uploaded successfully",
           });
           if (resd) {
-            athleticPerformance = 7.0;
-            technicalPerformance = 7.0;
+            athleticPerformance = 5.0;
+            technicalPerformance = 5.0;
             screen = "";
             socket.emit("judge scores", judgeResult);
           }
@@ -73,8 +73,8 @@
           });
           if (resd) {
             socket.emit("judge scores", judgeResult);
-            athleticPerformance = 7.0;
-            technicalPerformance = 7.0;
+            athleticPerformance = 5.0;
+            technicalPerformance = 5.0;
             screen = "";
           }
         }
@@ -89,8 +89,8 @@
     }
   };
   const reset = () =>{
-    technicalPerformance = 7.0;
-    athleticPerformance = 7.0;
+    technicalPerformance = 5.0;
+    athleticPerformance = 5.0;
   }
   let athlete;
   let win;
@@ -240,7 +240,7 @@
                   data-max-value="10"
                   id="technicalPerformance"
                   bind:value={technicalPerformance}
-                  data-step=".2"
+                  data-step=".1"
                   data-fixed="1"
                 />
               </div>
@@ -260,7 +260,7 @@
                   data-max-value="10"
                   id="athleticPerformance"
                   bind:value={athleticPerformance}
-                  data-step=".2"
+                  data-step=".1"
                   data-fixed="1"
                 />
               </div>
@@ -361,7 +361,7 @@
                 min="0.0"
                 max="10.0"
                 disabled
-                step="0.2"
+                step="0.1"
                 id="technique"
                 name="technique"
                 placeholder="0.0"
@@ -380,7 +380,7 @@
               </label>&nbsp;&nbsp;<input
                 min="0.0"
                 max="10.0"
-                step="0.2"
+                step="0.1"
                 disabled
                 id="athletics"
                 name="athletics"

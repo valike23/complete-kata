@@ -116,11 +116,7 @@
       let highestTP = tempJudges[4];
       console.log("lowest TP", lowestTP);
       console.log("highest TP", highestTP);
-      tempJudges2.sort((a, b) => {
-        return a.athletic_performance - b.athletic_performance;
-      });
-      let lowestAP = tempJudges2[0];
-      let highestAP = tempJudges2[4];
+   
       console.log("lowest AP", lowestAP);
       console.log("highest AP", highestAP);
       const tpl = "tp" + lowestTP.id;
