@@ -1,9 +1,6 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "./init";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
 
   export interface Ijudge {
     id?: number;

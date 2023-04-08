@@ -1,12 +1,10 @@
 
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Entry, Ientry } from "./entries";
+import { sequelize } from "./init";
 import { Pool } from "./pools";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
+
 export interface Icategory {
     id?: number;
     categoryName?: string;

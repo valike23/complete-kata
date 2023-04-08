@@ -1,9 +1,7 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "./init";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
+
 
   
 export class Kata extends Model {

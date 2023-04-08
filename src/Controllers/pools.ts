@@ -1,11 +1,8 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Entry, Ientry } from "./entries";
+import { sequelize } from "./init";
 import { Judge } from "./judges";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
 export enum EpoolStatus {
   CREATED = 0,
   ACTIVE = 1,

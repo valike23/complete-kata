@@ -1,13 +1,10 @@
 
 
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { Category } from "./category";
 import { Entry } from "./entries";
+import { sequelize } from "./init";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
 
 export interface Icompetition{
     id?: number;

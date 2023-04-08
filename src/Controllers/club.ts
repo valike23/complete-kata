@@ -1,11 +1,9 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import type { ImodelResp } from "../functions/severShared";
 import { Entry } from "./entries";
+import { sequelize } from "./init";
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'test.db'
-  });
+
 export interface Iclub {
     id?: number;
     clubName?: string;
