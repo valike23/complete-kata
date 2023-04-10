@@ -78,6 +78,7 @@
   };
 
   const startKata = () => {
+    console.log(fakePool, controller.currentAthlete);
     socket.emit("start judge", {
       athlete: controller.currentAthlete,
       pool: fakePool,
@@ -87,7 +88,6 @@
 
   const setup = function () {
     let tempJudges = JSON.parse(JSON.stringify(judges));
-    let tempJudges2 = JSON.parse(JSON.stringify(judges));
     let AAP = 0;
     let TAP = 0;
     let isComplete = false;
@@ -202,11 +202,11 @@
               </div>
                 <div class="col-12">
                   <label>A.Performance</label>
-                  <input type="number" id="test" data-role="input" value="7.0" min="0.0" max="10.0" step="0.2">
+                  <input type="number" id="test" data-role="input" value="5.0" min="0.0" max="10.0" step="0.1">
               </div>
               <div class="col-12">
                   <label>T.Performance</label>
-                  <input type="number" id="tec" data-role="input" value="7.0" min="0.0" max="10.0" step="0.2">
+                  <input type="number" id="tec" data-role="input" value="5.0" min="0.0" max="10.0" step="0.1">
               </div>
                 </div>
               </div>`,
@@ -239,7 +239,7 @@
                     caption: "Disagree",
                     cls: "js-dialog-close",
                     onclick: function(){
-                        alert("You clicked Disagree action");
+                        console.log('do nothing joor')
                     }
                 }
             ]
