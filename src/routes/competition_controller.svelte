@@ -3,7 +3,6 @@
   // `{ path, params, query }` object and turns it into
   // the data we need to render the page
   export async function preload(page, session) {
-    console.log(page);
     //load active pool if there is no active pool then controller should not open
     const res = await this.fetch("api/pools", { method: "PATCH" });
     const res2 = await this.fetch("api/judges");
@@ -34,12 +33,10 @@
   let endofPool = false;
   let isFinal = false;
   let socket = {};
+  let result = 0;
+  let total = 0;
   let fakePool = JSON.parse(JSON.stringify(pool));
   delete fakePool.entries;
-  console.log(pool);
-  let totalAth = 0;
-  let totalTech = 0;
-  console.log("pool entries", pool.entries);
   let controller = new competitionController(pool.entries);
   if (!controller.nextAthlete) {
     controller.nextAthlete = { name: "empty" };
@@ -54,7 +51,6 @@
         `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
       );
       if (resp) {
-        console.log("my judge data", resp);
         poolEntryId = resp.data.id;
         let judgesResult = resp.data;
         for (let index = 0; index < judges.length; index++) {
@@ -62,12 +58,10 @@
           for (let j = 0; j < judgesResult.judges.length; j++) {
             const judgeResp = judgesResp[j];
             if (judgeResp.judgeId == judge.id) {
-              judges[index].athletic_performance = judgeResp.ATH;
-              judges[index].technical_performance = judgeResp.TEC;
+              judges[index].RESULT = judgeResp.RESULT;
               break;
             }
-            judges[index].athletic_performance = 0;
-            judges[index].technical_performance = 0;
+            judges[index].RESULT = 0;
           }
           setup();
         }
@@ -78,22 +72,20 @@
   };
 
   const startKata = () => {
-    console.log(fakePool, controller.currentAthlete);
     socket.emit("start judge", {
       athlete: controller.currentAthlete,
       pool: fakePool,
     });
   };
-  let result = 0;
 
   const setup = function () {
     let tempJudges = JSON.parse(JSON.stringify(judges));
-    let AAP = 0;
-    let TAP = 0;
+    let RESULT = 0;
     let isComplete = false;
+    //confirm if the athlete is complete
     for (let index = 0; index < judges.length; index++) {
       const element = judges[index];
-      if (element.athletic_performance == undefined) {
+      if (element.RESULT == undefined) {
         isComplete = false;
         break;
       } else {
@@ -101,43 +93,27 @@
       }
     }
     judges.forEach((j) => {
-      console.log(j.technical_performance, j.athletic_performance);
-      TAP += j.technical_performance;
-      AAP += j.athletic_performance;
+      RESULT += j.RESULT;
     });
-
-    console.log(AAP, TAP);
+    total = RESULT;
     if (isComplete) {
       submit = true;
       tempJudges.sort((a, b) => {
-        return a.technical_performance - b.technical_performance;
+        return a.RESULT - b.RESULT;
       });
-      let lowestTP = tempJudges[0];
-      let highestTP = tempJudges[4];
-      console.log("lowest TP", lowestTP);
-      console.log("highest TP", highestTP);
-   
-      console.log("lowest AP", lowestAP);
-      console.log("highest AP", highestAP);
-      const tpl = "tp" + lowestTP.id;
-      const tph = "tp" + highestTP.id;
-      const apl = "ap" + lowestAP.id;
-      const aph = "ap" + highestAP.id;
-      console.log(tpl, tph, apl, aph);
+      console.log('tempjudges', tempJudges);
+      let lowstResult = tempJudges[0];
+      let highestResult = tempJudges[judges.length - 1];
+      // wait here
+      const tpl = "tp" + lowstResult.id;
+      const tph = "tp" + highestResult.id;
       document.getElementById(tpl).style.color = "red";
       document.getElementById(tph).style.color = "red";
-      document.getElementById(apl).style.color = "red";
-      document.getElementById(aph).style.color = "red";
-      AAP =
-        AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
-      TAP =
-        TAP - highestTP.technical_performance - lowestTP.technical_performance;
-      totalAth = AAP;
-      totalTech = TAP;
-      result = totalAth * 0.3 + totalTech * 0.7;
+      console.log('highest score', highestResult)
+      RESULT = RESULT - highestResult.RESULT - lowstResult.RESULT;
+      result = RESULT;
     } else {
-      totalTech = AAP / judges.length;
-      totalAth = TAP / judges.length;
+      result = RESULT;
     }
   };
   const upload = async () => {
@@ -145,8 +121,6 @@
     if (!resp) return;
     let body = {
       total: result,
-      ATH: totalAth * 0.3,
-      TEC: totalTech * 0.7,
     };
     socket.emit("result", {
       athlete: controller.currentAthlete,
@@ -178,17 +152,15 @@
       );
     }
   };
-  //console.log(pool.entries);
-  const openJudgeScore =()=>{
+  const openJudgeScore = () => {
     let judgeList = ``;
-    console.log('the judges', judges);
-    judges.forEach(element => {
+    judges.forEach((element) => {
       let text = `<option value="${element.id}"> ${element.judgeName}</option>`;
       judgeList += text;
     });
     win.Metro.dialog.create({
-            title: "Add Judges Result",
-            content: `<div class="container">
+      title: "Add Judges Result",
+      content: `<div class="container">
               <div class="row">
                 <div class="col-12">
                   <label>Judge</label>
@@ -200,53 +172,42 @@
  
 </select>
               </div>
-                <div class="col-12">
-                  <label>A.Performance</label>
-                  <input type="number" id="test" data-role="input" value="5.0" min="0.0" max="10.0" step="0.1">
-              </div>
+             
               <div class="col-12">
-                  <label>T.Performance</label>
+                  <label>Scores</label>
                   <input type="number" id="tec" data-role="input" value="5.0" min="0.0" max="10.0" step="0.1">
               </div>
                 </div>
               </div>`,
-            actions: [
-                {
-                    caption: "Agree",
-                    cls: "js-dialog-close alert",
-                    onclick: function(){
-                      const id = document.getElementById('test');
-                      const tec = document.getElementById('tec');
-                      const judge = document.getElementById("judgeselect");
-                      console.log(id.value, tec.value);
-                      console.log(judge.value);
-                      judges.forEach((judge2, i)=>{
-                        console.log(judge2.id, judge.value );
-                        if(judge2.id == judge.value){
-                          console.log('we have a match');
-                          judges[i].technical_performance = Number(tec.value) ;
-                          judges[i].athletic_performance = Number(id.value);
-                          judges = judges;
-                          console.log(judges);
-                          return;
-                        }
-
-                      })
-                        alert("You clicked Agree action");
-                    }
-                },
-                {
-                    caption: "Disagree",
-                    cls: "js-dialog-close",
-                    onclick: function(){
-                        console.log('do nothing joor')
-                    }
-                }
-            ]
-        });
-
-  
-  }
+      actions: [
+        {
+          caption: "Agree",
+          cls: "js-dialog-close alert",
+          onclick: function () {
+            const id = document.getElementById("test");
+            const tec = document.getElementById("tec");
+            const judge = document.getElementById("judgeselect");
+            judges.forEach((judge2, i) => {
+              if (judge2.id == judge.value) {
+                judges[i].technical_performance = Number(tec.value);
+                judges[i].athletic_performance = Number(id.value);
+                judges = judges;
+                return;
+              }
+            });
+            alert("You clicked Agree action");
+          },
+        },
+        {
+          caption: "Disagree",
+          cls: "js-dialog-close",
+          onclick: function () {
+            console.log("do nothing joor");
+          },
+        },
+      ],
+    });
+  };
   onMount(async () => {
     win = window;
     if (endofPool) {
@@ -282,9 +243,7 @@
       console.log(data);
       judges.forEach((judge, i) => {
         if (judge.id == data.judgeId) {
-
-          judges[i].technical_performance = data.TEC;
-          judges[i].athletic_performance = data.ATH;
+          judges[i].RESULT = data.RESULT;
         }
       });
       setup();
@@ -299,8 +258,13 @@
 <div class="h-100 container-fluid">
   <TopBar />
 
-  <h2>Competition Controller  <button on:click={openJudgeScore} title="use this button to upload scores only when judges screen has an issue" 
-    class="float-right button primary">Input Scores</button></h2>
+  <h2>
+    Competition Controller <button
+      on:click={openJudgeScore}
+      title="use this button to upload scores only when judges screen has an issue"
+      class="float-right button primary">Input Scores</button
+    >
+  </h2>
   <h3>Pool Name: {pool.poolName}</h3>
   <div class="row">
     <div class="cell">
@@ -324,7 +288,7 @@
   <div class="m-0 row">
     <div class="w-100 col-12">
       <div class="text-center">
-        <button on:click={startKata} class="button primary ">start kata</button>
+        <button on:click={startKata} class="button primary">start kata</button>
       </div>
       <br />
       <table
@@ -336,25 +300,16 @@
             ><th />{#each judges as judge, i}
               <th style="color: white">{"judge" + (i + 1)}</th>
             {/each}<th style="color: white">TOTAL</th>
-            <th style="color: white">FACTOR</th>
+
             <th style="color: white">RESULT</th></tr
           ></thead
         ><tbody
           ><tr
-            ><td class="font-weight-bolder">TECH</td>{#each judges as judge}
-              <td id={"tp" + judge.id}>{judge.technical_performance || ""}</td>
-            {/each}<td>{totalTech.toFixed(2)}</td><td>0.7</td><td
-              >{(totalTech * 0.7).toFixed(2)}</td
-            ></tr
-          ><tr
-            ><td class="font-weight-bolder">ATH</td>
-            {#each judges as judge}
-              <td id={"ap" + judge.id}>{judge.athletic_performance || ""}</td>
-            {/each}
-            <td>{totalAth.toFixed(2)}</td><td>0.3</td><td
-              >{(totalAth * 0.3).toFixed(2)}</td
-            ></tr
-          ><tr style="height: 75px;">
+            ><td class="font-weight-bolder">SCORES</td>{#each judges as judge}
+              <td id={"tp" + judge.id}>{judge.RESULT || ""}</td>
+            {/each} <td>{total.toFixed(2)}</td> <td>{result.toFixed(2)}</td></tr
+          >
+          <tr style="height: 75px;">
             {#each judges as judge}
               <td> &nbsp;</td>
             {/each}
@@ -385,8 +340,6 @@
     </div>
   </div>
 </div>
-
-
 
 <style>
   .small {

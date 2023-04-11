@@ -1,8 +1,8 @@
 <script>
   import axios from "axios";
   import { onMount } from "svelte";
-  let athleticPerformance = 7.0;
-  let technicalPerformance = 7.0;
+  let scores = 7.0;
+
   let judge = {};
   let socket;
   let isLogged = false;
@@ -13,9 +13,8 @@
     try {
       if (res) {
         let judgeResult = {
-          athletic_performance: 0,
           athlete_id: athlete.id,
-          technical_performance: 0,
+          RESULT: 0,
           judge_id: judge.id,
           pool_id: pool.id,
         };
@@ -29,8 +28,7 @@
             text: "scores uploaded successfully",
           });
           if (resd) {
-            athleticPerformance = 7.0;
-            technicalPerformance = 7.0;
+            scores = 7.0;
             screen = "";
             socket.emit("judge scores", judgeResult);
           }
@@ -47,20 +45,15 @@
   };
   let submitScore = async () => {
     let res = confirm("do you want to upload this athlete's score?");
-    athleticPerformance = Number(
-      document.getElementById("athleticPerformance").value
-    );
-    technicalPerformance = Number(
-      document.getElementById("technicalPerformance").value
-    );
-    console.log(athleticPerformance, technicalPerformance);
+    scores = Number(document.getElementById("scores").value);
+
+    console.log(scores);
 
     try {
       if (res) {
         let judgeResult = {
-          ATH: athleticPerformance,
           entryId: athlete.id,
-          TEC: technicalPerformance,
+          RESULT: scores,
           judgeId: judge.id,
           poolId: pool.id,
         };
@@ -76,8 +69,7 @@
           });
           if (resd) {
             socket.emit("judge scores", judgeResult);
-            athleticPerformance = 7.0;
-            technicalPerformance = 7.0;
+            scores = 7.0;
             screen = "";
           }
         }
@@ -92,8 +84,7 @@
     }
   };
   const reset = () => {
-    technicalPerformance = 7.0;
-    athleticPerformance = 7.0;
+    scores = 7.0;
   };
   let athlete;
   let win;
@@ -113,18 +104,17 @@
       screen = "judge";
 
       setTimeout(() => {
-        let ap = document.getElementById("athleticPerformance");
+        let ap = document.getElementById("scores");
         console.log(ap);
-        win.$(ap).on('plusClick',(e)=>{
-          console.log(e.detail)
+        win.$(ap).on("plusClick", (e) => {
+          console.log(e.detail);
           let input = Metro.getPlugin(ap, "spinner");
-          if(input.val() < 5) input.val(5);
-        })
-        win.$(ap).on('minusClick',(e)=>{
-          
+          if (input.val() < 5) input.val(5);
+        });
+        win.$(ap).on("minusClick", (e) => {
           let input = Metro.getPlugin(ap, "spinner");
-          if(input.val() < 5) input.val(0);
-        })
+          if (input.val() < 5) input.val(0);
+        });
       }, 3000);
       try {
         let response = await axios.get(
@@ -201,9 +191,7 @@
           <div
             class="justify-content-end text-center pt-4 text-white font-weight-bolder cell-5"
           >
-            <span class="font-size-18">0.7 TECHNICAL</span>&nbsp;&nbsp;<span
-              class="font-size-18">0.3 ATHLETIC</span
-            >
+            <span class="font-size-18"> RESULT</span>&nbsp;&nbsp;
           </div>
           <div class="cell-2">
             <button class="btn btn-warning btn-block btn btn-secondary"
@@ -243,14 +231,14 @@
           <div class="p-4 col">
             <div class="row">
               <div
-                class="p-2 cell-12 cell-sm-6"
+                class="p-2 cell-12 cell-sm-12"
                 style="border-right: 1px solid red;"
               >
                 <label
                   class="font-weight-bold h1"
                   for="tech"
                   style="color: white;"
-                  >TECH
+                  >Scores
                 </label>&nbsp;&nbsp;
 
                 <input
@@ -260,32 +248,13 @@
                   data-role="spinner"
                   data-min-value="0"
                   data-max-value="10"
-                  id="technicalPerformance"
-                  bind:value={technicalPerformance}
+                  id="scores"
+                  bind:value={scores}
                   data-step=".1"
                   data-fixed="1"
                 />
               </div>
-              <div class="p-2 text-right cell-12 cell-sm-6">
-                <label
-                  class="font-weight-bold h1 text-right"
-                  for="tech"
-                  style="color: white;"
-                  >ATH
-                </label>&nbsp;&nbsp;
-
-                <input
-                  class="font-weight-bold text-right"
-                  type="text"
-                  data-role="spinner"
-                  data-min-value="0"
-                  data-max-value="10"
-                  id="athleticPerformance"
-                  bind:value={athleticPerformance}
-                  data-step=".1"
-                  data-fixed="1"
-                />
-              </div>
+            
             </div>
           </div>
         </div>
@@ -337,9 +306,7 @@
           <div
             class="justify-content-end text-center pt-4 text-white font-weight-bolder col-5"
           >
-            <span class="font-size-18">0.7 TECHNICAL</span>&nbsp;&nbsp;<span
-              class="font-size-18">0.3 ATHLETIC</span
-            >
+            <span class="font-size-18">SCORES</span>&nbsp;&nbsp;
           </div>
           <div class="col-2">
             <button class="btn btn-warning btn-block btn btn-secondary"
@@ -376,11 +343,11 @@
         <div class="mx-5 row">
           <div class="p-4 col">
             <div class="row">
-              <div class="p-2 col-6" style="border-right: 1px solid red;">
+              <div class="p-2 col-12" style="border-right: 1px solid red;">
                 <label
                   class="font-weight-bold h1"
                   for="tech"
-                  style="color: white;">TECH 0</label
+                  style="color: white;">SCORES 0</label
                 >&nbsp;&nbsp;<input
                   min="0.0"
                   max="10.0"
@@ -395,26 +362,7 @@
                   style="border: 1px solid red; background-color: transparent; font-size: 28px; color: white;"
                 />
               </div>
-              <div class="p-2 text-right col-6">
-                <label
-                  class="font-weight-bold h1 text-right"
-                  for="tech"
-                  style="color: white;"
-                  >ATH
-                </label>&nbsp;&nbsp;<input
-                  min="0.0"
-                  max="10.0"
-                  step="0.1"
-                  disabled
-                  id="athletics"
-                  name="athletics"
-                  placeholder="0.0"
-                  class="form-control font-weight-bold text-right"
-                  type="number"
-                  value="0"
-                  style="border: 1px solid red; background-color: transparent; font-size: 28px; color: white;"
-                />
-              </div>
+            
             </div>
           </div>
         </div>

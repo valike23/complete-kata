@@ -10,8 +10,7 @@ interface IcompetitionEntry {
 };
 
 interface IpoolEntry {
-    ATH?: number;
-    TEC?: number;
+  
     entryId?: number;
     kata?: string;
     poolId?: number;
@@ -20,8 +19,7 @@ interface IpoolEntry {
     judgeResult?: IpoolJudgeResult[]
 }
 interface IpoolJudgeResult {
-    ATH?: number;
-    TEC?: number;
+   result?: number;
     judgeId?: number;
 }
 
@@ -35,51 +33,51 @@ export class competitionController {
         let setFirst = false;
         for (let index = 0; index < entries.length; index++) {
             const element = entries[index];
-            console.log('element',element);
-            if(!setFirst){
-                if(element.pool_entries.status == 0 || element.pool_entries.status == 1){
-                    
+            console.log('element', element);
+            if (!setFirst) {
+                if (element.pool_entries.status == 0 || element.pool_entries.status == 1) {
+
                     this.currentAthlete = element;
                     setFirst = true;
                 }
-                
+
             }
-            else{
-               if(element.pool_entries.status == 0){
-                this.nextAthlete = element;
-                return;
-               }
-                
+            else {
+                if (element.pool_entries.status == 0) {
+                    this.nextAthlete = element;
+                    return;
+                }
+
             }
-            
-          }
+
+        }
 
 
     }
 
-    updateNextEntry(){
-       try {
-        let isSet = false;
-        for (let index = 0; index < this.entries.length; index++) {
-         const element = this.entries[index];
-         if(element.id == this.currentAthlete.id) {
-             console.log('update',this.entries[index])
-             this.entries[index].pool_entries.status = 1;
-             continue;
-         }
-         else if(element.id == this.nextAthlete.id){
-             this.currentAthlete = this.nextAthlete;
-             continue;
-         }
-         else if(element.pool_entries.status == 0 && !isSet) {
-             this.nextAthlete = element;
-             isSet = true;
-         }
-         
+    updateNextEntry() {
+        try {
+            let isSet = false;
+            for (let index = 0; index < this.entries.length; index++) {
+                const element = this.entries[index];
+                if (element.id == this.currentAthlete.id) {
+                    console.log('update', this.entries[index])
+                    this.entries[index].pool_entries.status = 1;
+                    continue;
+                }
+                else if (element.id == this.nextAthlete.id) {
+                    this.currentAthlete = this.nextAthlete;
+                    continue;
+                }
+                else if (element.pool_entries.status == 0 && !isSet) {
+                    this.nextAthlete = element;
+                    isSet = true;
+                }
+
+            }
+        } catch (error) {
+            console.error(error);
         }
-       } catch (error) {
-        console.error(error);
-       }
     }
 
 }

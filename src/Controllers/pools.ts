@@ -25,8 +25,6 @@ export interface Ipool {
 export interface IpoolEntries {
   id?: number;
   total?: number;
-  ATH?: number;
-  TEC?: number;
   kata?: string;
   status?: number;
 }
@@ -86,8 +84,6 @@ export const poolEntries = sequelize.define('pool_entries', {
 
 },
   total: DataTypes.DECIMAL,
-  ATH: DataTypes.DECIMAL,
-  TEC: DataTypes.DECIMAL,
   kata: DataTypes.STRING,
   status:{type: DataTypes.SMALLINT, defaultValue: 0}
 }, { timestamps: false });
@@ -95,8 +91,7 @@ export const poolEntries = sequelize.define('pool_entries', {
 
 export const poolEntriesJudge = sequelize.define('pool_entries_judge', {
 
-  ATH: DataTypes.DECIMAL,
-  TEC: DataTypes.DECIMAL,
+  RESULT: DataTypes.DECIMAL,
   status:{type: DataTypes.SMALLINT, defaultValue: 0}
 }, { timestamps: false });
 Pool.belongsToMany(Entry,{through: poolEntries});
