@@ -17,7 +17,7 @@
   import TopBar from "../../components/TopBar.svelte";
 
   export let pool, clubsResp;
-  console.log(pool);
+  console.log(' the pools here,',pool);
   let entries = [];
   let clubs = clubsResp.body;
   console.log(clubs);
@@ -144,11 +144,9 @@
         <th style="color:white">Club</th>
         <th style="color:white">Kata</th>
         {#each entries[0].judges as judge, i}
-          <th style="color:white">{i + 1}T</th>
-          <th style="color:white">{i + 1}A</th>
+          <th style="color:white">Judge {i + 1}</th>
         {/each}
-        <th style="color:white">TEC</th>
-        <th style="color:white">ATH</th>
+       
         <th style="color:white">Total</th>
       </tr>
     </thead>
@@ -160,11 +158,9 @@
           <td>{entry.club.clubName}</td>
           <td>{entry.kata}</td>
           {#each entry.judges as judge}
-            <td>{judge.TEC}</td>
-            <td>{judge.ATH}</td>
+            <td>{judge.RESULT}</td>
+          
           {/each}
-          <td>{(entry.TEC || 0).toFixed(2)}</td>
-          <td>{(entry.ATH || 0).toFixed(2)}</td>
           <td>{(entry.total || 0).toFixed(2)}</td>
         </tr>
       {/each}

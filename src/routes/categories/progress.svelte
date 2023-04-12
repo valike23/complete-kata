@@ -16,6 +16,8 @@
 </script>
 
 <script >
+
+import TopBar from "../../components/TopBar.svelte";
   import { processEntriesArray } from "../../functions/severShared";
 
   
@@ -23,8 +25,45 @@
 
   console.log('entries', entries, 'and  pools', pools);
   console.log(poolsDetail);
-  let final = [];
-  final.push(poolsDetail[0]);
-  final.push(poolsDetail[1]);
-  console.log('final app2: ',processEntriesArray(final,name, round ));
+  let myPools = [];
+
+   myPools = processEntriesArray(poolsDetail,name, round );
+  console.log('final app2: ',processEntriesArray(poolsDetail,name, round ));
 </script>
+<div class="h-100 container-fluid">
+  <TopBar active="pools"/>
+
+  <div class="row mb-3 mt-5">
+    <div class="cell">
+      <button class="button primary">
+       upload pool
+      </button>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+   {#each myPools as item}
+    <div class="col mr-2">
+      <h3>pool name: {item.poolName}  <span>round: {'round' + round}</span></h3>
+      <table class="table">
+        <thead style="color: white">
+        <tr>
+            <th>#</th>
+            <th> Name</th>
+        </tr>
+        </thead>
+        <tbody>
+       {#each item.entries as entry, i}
+       <tr>
+        <td>{i + 1}</td>
+        <td>{entry.name}</td>
+    </tr>
+       {/each}
+        </tbody>
+    </table>
+    </div>
+   {/each}
+  </div>
+
+
+</div>
