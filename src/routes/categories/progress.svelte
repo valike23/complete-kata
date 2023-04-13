@@ -18,14 +18,38 @@
 <script >
 
 import TopBar from "../../components/TopBar.svelte";
+  import { EnotificationType, handleNotification } from "../../functions/browserFunctions";
   import { processEntriesArray } from "../../functions/severShared";
+  import axios from 'axios';
 
   
-  export let entries, pools, poolsDetail, name, round;
+  export let entries, pools, poolsDetail, name, round, id;
 
   console.log('entries', entries, 'and  pools', pools);
   console.log(poolsDetail);
   let myPools = [];
+  const uploadPools = async () =>{
+    if(!confirm('do you want to create the below pools?')) return;
+    let promises = [];
+    myPools.forEach((pool)=>{
+      pool.categoryId = id;
+      let form = new FormData();
+      form.append('body',JSON.stringify(pool));
+      promises.push(axios.post('api/pools', form));
+    })
+    try {
+      const resp = await Promise.all(promises);
+      if(resp){
+        handleNotification(window, 'pools created successfully', EnotificationType.SUCCESS);
+        goto("pools");
+      }
+    } catch (error) {
+      console.log(error);
+      handleNotification(window, 'something went wrong', EnotificationType.ERROR);
+    }
+  
+   
+  }
 
    myPools = processEntriesArray(poolsDetail,name, round );
   console.log('final app2: ',processEntriesArray(poolsDetail,name, round ));
@@ -35,7 +59,7 @@ import TopBar from "../../components/TopBar.svelte";
 
   <div class="row mb-3 mt-5">
     <div class="cell">
-      <button class="button primary">
+      <button on:click={uploadPools} class="button primary">
        upload pool
       </button>
     </div>

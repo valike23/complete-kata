@@ -39,10 +39,17 @@ function generateNewPools(pools: any[], round, name) {
   try {
     if (pools.length <= 2) {
       if (pools[0].entries.length < 4 && pools[1].entries.length < 4) return finalBout(pools, name, round);
+      // handle 2 pools but4 entries
+      if(pools[0].entries.length == 4 ) combine2x4x(pools, name, round);
 
     }
     else {
-      let newPools: any[] = [];
+      // 4 pools
+      if(pools.length == 4) return combine4x8x(pools, name, round);
+      // 8 pools 8 entires  
+
+      //16 pools 8 entries
+
     
     }
   } catch (error) {
@@ -82,5 +89,45 @@ function finalBout(pools: any[], name, round) {
 }
 
 function combine4x8x(pools: any[], name, round){
-  
+  let newPools: any[] = [];
+  let pool1 = {poolName: name + 'R' + Number(round) + 1 + '-G1' ,
+  round: Number(round) + 1,
+  entries: []};
+  let pool2 = {poolName: name +  'R' + Number(round) + 1 +'-G2' ,
+  round: Number(round) + 1,
+  entries: []};
+  pools[0].entries((entry)=>{
+    pool1.entries.push(entry);
+  });
+  pools[1].entries((entry)=>{
+    pool1.entries.push(entry);
+  });
+  pools[2].entries((entry)=>{
+    pool2.entries.push(entry);
+  });
+  pools[3].entries((entry)=>{
+    pool2.entries.push(entry);
+  });
+  newPools.push(pool1);
+  newPools.push(pool2);
+  return newPools;
+}
+
+function combine2x4x(pools: any[], name, round){
+  let newPools: any[] = [];
+  let pool1 = {poolName: name + 'R' + Number(round) + 1 + '-G1' ,
+  round: Number(round) + 1,
+  entries: []};
+  let pool2 = {poolName: name +  'R' + Number(round) + 1 +'-G2' ,
+  round: Number(round) + 1,
+  entries: []};
+  pools[0].entries((entry)=>{
+    pool1.entries.push(entry);
+  });
+  pools[1].entries((entry)=>{
+    pool2.entries.push(entry);
+  });
+  newPools.push(pool1);
+  newPools.push(pool2);
+  return newPools;
 }

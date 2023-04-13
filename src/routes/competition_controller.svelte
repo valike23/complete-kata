@@ -20,6 +20,7 @@
   import TopBar from "../components/TopBar.svelte";
   import { onMount } from "svelte";
   import axios from "axios";
+  import Timer from "../components/Timer.svelte";
   import {
     EnotificationType,
     handleNotification,
@@ -31,6 +32,9 @@
   let poolEntryId = 0;
   let submit = false;
   let endofPool = false;
+  let handleTimerEnd = ()=>{
+    alert('timer end');
+  }
   let isFinal = false;
   let socket = {};
   let result = 0;
@@ -266,6 +270,12 @@
     >
   </h2>
   <h3>Pool Name: {pool.poolName}</h3>
+  <div class="row">
+    <div class="cell">
+      
+<Timer minutes={2} seconds={30} on:timerend={handleTimerEnd} />
+    </div>
+  </div>
   <div class="row">
     <div class="cell">
       <div class="card small">
