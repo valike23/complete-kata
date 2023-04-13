@@ -22,7 +22,15 @@ const server = http.createServer(app);
 const io = new Server(server);
 io.of('/display').on('connection', (socket: Socket) => {
 	console.log(`a user with socketID: ${socket.id} coonnected to the display module`);
+	socket.on('timer-start',(data)=>{
+		console.log('timer activation here', data);
+		socket.broadcast.emit('timer-start', data)
 
+	})
+	socket.on('end-timer',(data)=>{
+		socket.broadcast.emit('end-timer', data)
+
+	})
 	socket.on('show pool', (data) => {
 		console.log('recieved show pool event');
 		socket.broadcast.emit('active pool', data.pool)

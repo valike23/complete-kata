@@ -32,13 +32,15 @@
   let poolEntryId = 0;
   let submit = false;
   let endofPool = false;
-  let handleTimerEnd = ()=>{
-    alert('timer end');
-  }
+  let handleTimerEnd = () => {
+    console.log("timer end");
+    socket.emit("end-timer",{});
+  };
   let isFinal = false;
   let socket = {};
   let result = 0;
   let total = 0;
+  let minutes = 5;
   let fakePool = JSON.parse(JSON.stringify(pool));
   delete fakePool.entries;
   let controller = new competitionController(pool.entries);
@@ -105,7 +107,7 @@
       tempJudges.sort((a, b) => {
         return a.RESULT - b.RESULT;
       });
-      console.log('tempjudges', tempJudges);
+      console.log("tempjudges", tempJudges);
       let lowstResult = tempJudges[0];
       let highestResult = tempJudges[judges.length - 1];
       // wait here
@@ -113,7 +115,7 @@
       const tph = "tp" + highestResult.id;
       document.getElementById(tpl).style.color = "red";
       document.getElementById(tph).style.color = "red";
-      console.log('highest score', highestResult)
+      console.log("highest score", highestResult);
       RESULT = RESULT - highestResult.RESULT - lowstResult.RESULT;
       result = RESULT;
     } else {
@@ -169,12 +171,12 @@
                 <div class="col-12">
                   <label>Judge</label>
                   <select id="judgeselect" data-role="select">
-    <optgroup label="Judges">
+                <optgroup label="Judges">
        
-      ${judgeList}
-    </optgroup>
+                ${judgeList}
+                </optgroup>
  
-</select>
+              </select>
               </div>
              
               <div class="col-12">
@@ -212,6 +214,10 @@
       ],
     });
   };
+
+  const handleTimerStart =()=>{
+    socket.emit("timer-start",{minutes});
+  }
   onMount(async () => {
     win = window;
     if (endofPool) {
@@ -272,9 +278,11 @@
   <h3>Pool Name: {pool.poolName}</h3>
   <div class="row">
     <div class="cell">
-      
-<Timer minutes={2} seconds={30} on:timerend={handleTimerEnd} />
-    </div>
+      {#if isFinal}
+      <Timer minutes={minutes} seconds={0} on:timerend={handleTimerEnd} on:timerstart={handleTimerStart} controls={true} />
+   
+      {/if}
+      </div>
   </div>
   <div class="row">
     <div class="cell">
@@ -335,11 +343,11 @@
           <input
             type="checkbox"
             data-style="2"
+            id="final"
             bind:checked={isFinal}
-            data-role="checkbox"
             data-caption="is Final Bouth"
-            data-indeterminate="true"
-          />
+            
+          /><label for="final">is Team Final Bouth</label>
         </div>
         <div class="cell-9 text-center">
           <button disabled={!submit} class="button success" on:click={upload}

@@ -1,6 +1,7 @@
 <script>
   import axios from "axios";
   import { onMount } from "svelte";
+  import Timer from "../../components/Timer.svelte";
   let socket, win;
   let pool = {};
   let club = {};
@@ -11,9 +12,19 @@
   athlete.result = 0;
   athlete.club = {};
   let kata = "";
+  let endClock = false;
+  let timer = false;
   athlete.category = {};
   let show = "";
-
+  let minutes = 0;
+  let seconds = 0;
+  const handleTimerStart =()=>{
+    console.log("start kata");
+  }
+const handleTimerEnd = ()=>{
+  console.log("end kata");
+  
+}
   const setup = function () {
     let tempJudges = JSON.parse(JSON.stringify(judges));
     let tempJudges2 = JSON.parse(JSON.stringify(judges));
@@ -77,6 +88,19 @@
     socket.on("connect", () => {
       console.log(socket.id);
     });
+    socket.on("end-timer",(data)=>{ 
+      endClock = true;
+      minutes = 0;
+      seconds = 2;
+      console.log(data, 'end clock variable ', endClock );
+     
+
+    })
+    socket.on("timer-start",(data)=>{
+      minutes = data.minutes;
+      console.log('minute', minutes)
+      timer = true;
+    })
     socket.on("update", (data) => {});
     socket.on("start judge", async (data) => {
       show = "kata";
@@ -251,6 +275,13 @@
         <h1>{pool.poolName}</h1>
       </div>
     </div>
+  {#if timer}
+  <div class="row">
+    <div class="cell">
+      <Timer {minutes} {seconds} on:timerend={handleTimerEnd} on:timerstart{handleTimerStart} auto={true} />
+    </div>
+  </div>
+  {/if}
     <div class="row">
       <div class="cell-2 red" />
       <div class="cell-7">

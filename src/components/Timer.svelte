@@ -7,12 +7,15 @@
 
   export let minutes = 0;
   export let seconds = 0;
+  export let controls = false;
+  export let auto = false;
   export let onTimerEnd;
   let timeRemaining = 0;
 
   let interval;
 
   function startTimer() {
+    dispatch("timerstart");
     interval = setInterval(() => {
       if (seconds === 0) {
         if (minutes === 0) {
@@ -35,6 +38,8 @@
   }
 
   function stopTimer() {
+    console.log("stop timer");
+    dispatch("timerend");
     clearInterval(interval);
   }
 
@@ -46,7 +51,7 @@
   }
 
   onMount(() => {
-    startTimer();
+    if (auto) startTimer();
   });
 
   onDestroy(() => {
@@ -64,13 +69,15 @@
       </h1>
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      <button class="btn btn-primary mr-2" on:click={startTimer}>Start</button>
-      <button class="btn btn-danger mr-2" on:click={stopTimer}>Stop</button>
-      <button class="btn btn-secondary" on:click={resetTimer}>Reset</button>
+  {#if controls}
+    <div class="row">
+      <div class="col">
+        <button class="button primary mr-2" on:click={startTimer}>Start</button>
+        <button class="button btn-danger mr-2" on:click={stopTimer}>Stop</button
+        >
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
 
 <style>
