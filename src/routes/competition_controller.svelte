@@ -204,8 +204,8 @@ const showFinalResult =()=>{
             const judge = document.getElementById("judgeselect");
             judges.forEach((judge2, i) => {
               if (judge2.id == judge.value) {
-                judges[i].technical_performance = Number(tec.value);
-                judges[i].athletic_performance = Number(id.value);
+                judges[i].RESULT = Number(tec.value);
+               
                 judges = judges;
                 return;
               }
@@ -331,7 +331,7 @@ const showFinalResult =()=>{
         <thead
           ><tr
             ><th />{#each judges as judge, i}
-              <th style="color: white">{"judge" + (i + 1)}</th>
+              <th style="color: white">{judge.judgeName}</th>
             {/each}<th style="color: white">TOTAL</th>
 
             <th style="color: white">RESULT</th></tr

@@ -101,7 +101,7 @@
       timer = true;
     });
     socket.on("final-result", async (data) => {
-      show = "final";
+     
       console.log(data);
       finalPool = data;
       try {
@@ -114,6 +114,7 @@
           promises.push(axios.get("api/club?id=" + entry.clubId)) ;
         });
         let clubResp = await Promise.all(promises);
+        show = "final";
         console.log('club response :',clubResp.data);
       } catch (error) {
         console.log(error);
@@ -450,7 +451,7 @@
     </div>
     <div class="row">
       <div class="cell-7 text-center">
-        <h1>{finalResult.entries[0].name}</h1>
+        <h1>{finalResult.entries[1].name}</h1>
       </div>
       <div class="cell-5" />
     </div>
