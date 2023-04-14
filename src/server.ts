@@ -27,6 +27,11 @@ io.of('/display').on('connection', (socket: Socket) => {
 		socket.broadcast.emit('timer-start', data)
 
 	})
+	socket.on('final-result',(data)=>{
+		console.log('final scores here', data);
+		socket.broadcast.emit('final-result', data);
+
+	})
 	socket.on('end-timer',(data)=>{
 		socket.broadcast.emit('end-timer', data)
 

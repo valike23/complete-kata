@@ -37,6 +37,7 @@
     socket.emit("end-timer",{});
   };
   let isFinal = false;
+  
   let socket = {};
   let result = 0;
   let total = 0;
@@ -77,7 +78,7 @@
     }
   };
 const showFinalResult =()=>{
-  
+
 }
   const startKata = () => {
     socket.emit("start judge", {
@@ -124,13 +125,19 @@ const showFinalResult =()=>{
       result = RESULT;
     }
   };
+  const showFinalsScore =()=>{
+    console.log('this is the final result release');
+    socket.emit("final-result", {
+      pool: fakePool,
+    })
+  }
   const upload = async () => {
     let resp = confirm("do you want to upload the result?");
     if (!resp) return;
     let body = {
       total: result,
     };
-    socket.emit("result", {
+    if(!isFinal) socket.emit("result", {
       athlete: controller.currentAthlete,
       judges: judges,
       score: body,
@@ -271,7 +278,13 @@ const showFinalResult =()=>{
   <TopBar />
 
   <h2>
-    Competition Controller <button
+    Competition Controller {#if isFinal}
+    <button
+    on:click={showFinalsScore}
+    title="use this button to show finals result on TV screen"
+    class="float-right button primary">Show Final Result</button
+  >
+    {/if} <button
       on:click={openJudgeScore}
       title="use this button to upload scores only when judges screen has an issue"
       class="float-right button primary">Input Scores</button

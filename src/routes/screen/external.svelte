@@ -6,6 +6,8 @@
   let pool = {};
   let club = {};
   let judges = [];
+  let finalPool = {};
+  let finalResult = {};
   let result = {};
   let athletes = [];
   let athlete = {};
@@ -15,7 +17,7 @@
   let endClock = false;
   let timer = false;
   athlete.category = {};
-  let show = "final";
+  let show = "";
   let minutes = 0;
   let seconds = 0;
   const handleTimerStart = () => {
@@ -97,6 +99,25 @@
       minutes = data.minutes;
       console.log("minute", minutes);
       timer = true;
+    });
+    socket.on("final-result", async (data) => {
+      show = "final";
+      console.log(data);
+      finalPool = data;
+      try {
+        const resp = await axios.get("api/pools/scores?id=" + data.pool.id);
+        finalResult = resp.data;
+        console.log('final result', finalResult);
+        let promises = [];
+        finalResult.entries.forEach((entry)=>{
+          
+          promises.push(axios.get("api/club?id=" + entry.clubId)) ;
+        });
+        let clubResp = await Promise.all(promises);
+        console.log('club response :',clubResp.data);
+      } catch (error) {
+        console.log(error);
+      }
     });
     socket.on("update", (data) => {});
     socket.on("start judge", async (data) => {
@@ -302,7 +323,7 @@
         <h1>{pool.poolName}</h1>
       </div>
     </div>
- 
+
     <div class="row">
       <div class="cell-2 red" />
       <div class="cell-7">
@@ -330,19 +351,19 @@
     <div class="row">
       <div class="cell">
         {#if timer}
-        <div class="row">
-          <div class="cell">
-            <Timer
-              {minutes}
-              {seconds}
-              makeBold={true}
-              on:timerend={handleTimerEnd}
-              on:timerstart{handleTimerStart}
-              auto={true}
-            />
+          <div class="row">
+            <div class="cell">
+              <Timer
+                {minutes}
+                {seconds}
+                makeBold={true}
+                on:timerend={handleTimerEnd}
+                on:timerstart{handleTimerStart}
+                auto={true}
+              />
+            </div>
           </div>
-        </div>
-      {/if}
+        {/if}
       </div>
     </div>
   </div>
@@ -396,7 +417,7 @@
   <div class="container mb-4 pb-4">
     <div style="background-color: gray;" class="row mt-5">
       <div class="cell-12">
-        <h1>{"pool.poolName"}</h1>
+        <h1>{finalResult.poolName}</h1>
       </div>
     </div>
     <div class="row border mt-2">
@@ -411,7 +432,7 @@
     </div>
     <div class="row">
       <div class="cell-7 text-center">
-        <h1>Tobi Mark Smith</h1>
+        <h1>{finalResult.entries[0].name}</h1>
       </div>
       <div class="cell-5" />
     </div>
@@ -422,14 +443,14 @@
       <div class="cell-3 text-center">
         <div class="row">
           <div class="cell-12 border">
-            <h1>18.1</h1>
+            <h1>{ Number(finalResult.entries[0].pool_entries.total ).toFixed(2)  }</h1>
           </div>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="cell-7 text-center">
-        <h1>Obodo Mike Smith</h1>
+        <h1>{finalResult.entries[0].name}</h1>
       </div>
       <div class="cell-5" />
     </div>
@@ -440,7 +461,7 @@
       <div class="cell-3 text-center">
         <div class="row">
           <div class="cell-12 border">
-            <h1>18.1</h1>
+            <h1>{ Number(finalResult.entries[1].pool_entries.total ).toFixed(2)  }</h1>
           </div>
         </div>
       </div>
