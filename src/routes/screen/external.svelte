@@ -109,13 +109,20 @@
         finalResult = resp.data;
         console.log('final result', finalResult);
         let promises = [];
-        finalResult.entries.forEach((entry)=>{
+        finalResult.entries.forEach((entry, i)=>{
+          finalResult.entries[i].club = {};
           
           promises.push(axios.get("api/club?id=" + entry.clubId)) ;
         });
         let clubResp = await Promise.all(promises);
         show = "final";
-        console.log('club response :',clubResp.data);
+        console.log('club response :',clubResp);
+        if(clubResp){
+          clubResp.forEach((resp, i)=>{
+            finalResult.entries[i].club = resp.data;
+
+          })
+        }
       } catch (error) {
         console.log(error);
       }
@@ -439,7 +446,7 @@
     </div>
     <div class="row">
       <div class="cell-9 bg-red fg-white text-center">
-        <h1>Lagos State</h1>
+        <h1>{finalResult.entries[0].club.clubName}</h1>
       </div>
       <div class="cell-3 text-center">
         <div class="row">
@@ -457,7 +464,7 @@
     </div>
     <div class="row">
       <div class="cell-9 bg-blue fg-white text-center">
-        <h1>Katsina State</h1>
+        <h1>{finalResult.entries[1].club.clubName}</h1>
       </div>
       <div class="cell-3 text-center">
         <div class="row">
