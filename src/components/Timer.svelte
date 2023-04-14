@@ -6,6 +6,7 @@
   const dispatch = createEventDispatcher();
 
   export let minutes = 0;
+  export let makeBold = false;
   export let seconds = 0;
   export let controls = false;
   export let auto = false;
@@ -62,7 +63,7 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <h1 class:timer-red={timeRemaining <= 60}>
+      <h1 class:bold-text={makeBold == true} class:timer-red={timeRemaining <= 60}>
         {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10
           ? `0${seconds}`
           : seconds}
@@ -83,5 +84,9 @@
 <style>
   .timer-red {
     color: red;
+  }
+  .bold-text {
+    font-weight: 900;
+    font-size: 180px;
   }
 </style>

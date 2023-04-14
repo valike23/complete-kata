@@ -76,7 +76,9 @@
       console.log(error);
     }
   };
-
+const showFinalResult =()=>{
+  
+}
   const startKata = () => {
     socket.emit("start judge", {
       athlete: controller.currentAthlete,
