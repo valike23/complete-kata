@@ -229,6 +229,16 @@ const showFinalResult =()=>{
   }
   onMount(async () => {
     win = window;
+    socket = window.io("/display");
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+    console.log('pool', pool);
+    const resp = pool.poolName.split(' ');
+    //automatically set the app to final if it is a final app
+    if(resp[resp.length - 1] == 'Medal') {isFinal = true;
+      socket.emit('show-final', {pool});
+    }
     if (endofPool) {
       handleNotification(
         window,
@@ -251,13 +261,10 @@ const showFinalResult =()=>{
         console.log(error);
         handleNotification(window, "an error occured", EnotificationType.ERROR);
       }
-    }
+    };
     resetVariables();
 
-    socket = window.io("/display");
-    socket.on("connect", () => {
-      console.log(socket.id);
-    });
+  
     socket.on("judge scores", (data) => {
       console.log(data);
       judges.forEach((judge, i) => {

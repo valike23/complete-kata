@@ -12,10 +12,11 @@
   export let auto = false;
   export let onTimerEnd;
   let timeRemaining = 0;
-
+let start = true;
   let interval;
 
   function startTimer() {
+    start = false;
     dispatch("timerstart");
     interval = setInterval(() => {
       if (seconds === 0) {
@@ -39,6 +40,7 @@
   }
 
   function stopTimer() {
+    start = true;
     console.log("stop timer");
     dispatch("timerend");
     clearInterval(interval);
@@ -62,7 +64,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">
+    <div class="col" style="text-align: center">
       <h1 class:bold-text={makeBold == true} class:timer-red={timeRemaining <= 60}>
         {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10
           ? `0${seconds}`
@@ -73,9 +75,14 @@
   {#if controls}
     <div class="row">
       <div class="col">
-        <button class="button primary mr-2" on:click={startTimer}>Start</button>
-        <button class="button btn-danger mr-2" on:click={stopTimer}>Stop</button
-        >
+        {#if start}
+        <button style="width:100%" class="button primary mr-2 btn-block" on:click={startTimer}>Start Timer</button>
+        {:else}
+        <button style="width:100%" class="button alert mr-2" on:click={stopTimer}>Stop Timer</button
+          >
+        {/if}
+       
+      
       </div>
     </div>
   {/if}

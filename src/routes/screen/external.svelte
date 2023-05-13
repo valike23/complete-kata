@@ -2,11 +2,13 @@
   import axios from "axios";
   import { onMount } from "svelte";
   import Timer from "../../components/Timer.svelte";
+  import FinalShow from "../../components/screens/FinalShow.svelte";
   let socket, win;
   let pool = {};
   let club = {};
   let judges = [];
   let finalPool = {};
+  let finalScreen = {};
   let finalResult = {};
   let result = {};
   let athletes = [];
@@ -89,6 +91,10 @@
     socket.on("connect", () => {
       console.log(socket.id);
     });
+    socket.on("show-final",(data)=>{
+      finalScreen = data.pool;
+      show = 'show-final';
+    })
     socket.on("end-timer", (data) => {
       endClock = true;
       minutes = 0;
@@ -475,6 +481,8 @@
       </div>
     </div>
   </div>
+  {:else if show == "show-final"}
+  <FinalShow pool={finalScreen}></FinalShow>
 {:else}
   <div class="container" style="background-color: black;">
     <div class="text-center justify-content-center row">
