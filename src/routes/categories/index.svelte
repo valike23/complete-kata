@@ -73,11 +73,11 @@
         goto(`categories/draft?seeding=0&id=${category.id}&name=${category.categoryName}`);
     }
   };
-  const deleteCategory = async (competition) => {
+  const deleteCategory = async (category) => {
     try {
       let con = confirm('please note after deleting this category all record of it would be lost. Do you want to continue?');
       if(!con) return;
-      const resp = await axios.delete("api/category?id=" + competition.id);
+      const resp = await axios.delete("api/category?id=" + category.id);
       if (resp) {
         handleNotification(
           window,
@@ -85,12 +85,12 @@
           EnotificationType.SUCCESS
         );
 
-        competitions.forEach((comp, i) => {
-          if (comp.id == competition.id) {
-            competitions.splice(i, 1);
+        categories.forEach((comp, i) => {
+          if (comp.id == category.id) {
+            categories.splice(i, 1);
           }
         });
-        competitions = competitions;
+        categories = categories;
       }
     } catch (error) {
       handleNotification(

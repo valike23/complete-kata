@@ -88,9 +88,18 @@
     }
   };
   const generatePool = () => {
-    for (let index = 0; index < totalPools; index++) {
+    console.log(entries);
+    if(entries.length < 4) {
+      console.log('this is less than 4 entries')
+      return pools.push({ poolName:"Finals "+ name + " " + "Medal" , entries: [] });
+    }
+      else{
+        console.log('this is more than 4 entries');
+        for (let index = 0; index < totalPools; index++) {
       pools.push({ poolName: name + " " + "R1-G" + (index + 1), entries: [] });
     }
+      }
+    
   };
   const switchseed = (seedNumber) => {
     if (seedNumber == 4) {
@@ -163,6 +172,12 @@
       pools = pools;
       disabled = false;
     } else {
+      if(pools.length == 1){
+        pools[0].entries = entries;
+        pools = pools;
+        disabled = false;
+        return;
+      }
       entries.forEach((entry, i) => {
         if (i == 0 || i % 2 == 0) {
           pools[firstIndex].entries.push(entry);

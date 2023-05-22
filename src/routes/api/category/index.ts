@@ -42,6 +42,7 @@ export async function del(req, res) {
      const resp = await Category.destroy({where:{id: req.query.id}});
      res.json(resp);
     } catch (error) {
+        console.log(error);
        res.status(503).json(error);
     }
 }
