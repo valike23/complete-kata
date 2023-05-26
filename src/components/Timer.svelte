@@ -65,7 +65,7 @@ let start = true;
 <div class="container">
   <div class="row">
     <div class="col" style="text-align: center">
-      <h1 class:bold-text={makeBold == true} class:timer-red={timeRemaining <= 60}>
+      <h1 class:bold-text={makeBold == true} class="timer-red">
         {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10
           ? `0${seconds}`
           : seconds}

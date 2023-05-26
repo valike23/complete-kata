@@ -37,6 +37,7 @@
     socket.emit("end-timer",{});
   };
   let isFinal = false;
+  let isTeamFinal = false;
   
   let socket = {};
   let result = 0;
@@ -236,8 +237,13 @@ const showFinalResult =()=>{
     console.log('pool', pool);
     const resp = pool.poolName.split(' ');
     //automatically set the app to final if it is a final app
-    if(resp[resp.length - 1] == 'Medal') {isFinal = true;
+    if(resp[resp.length - 1] == 'Medal') {
+      isFinal = true;
       socket.emit('show-final', {pool});
+      resp.forEach((text)=>{
+        if(text == 'team' || text == 'Team', text == 'TEAM') isTeamFinal = true;
+
+      })
     }
     if (endofPool) {
       handleNotification(
@@ -289,15 +295,15 @@ const showFinalResult =()=>{
     <button
     on:click={showFinalsScore}
     title="use this button to show finals result on TV screen"
-    class="float-right button primary">Show Final Result</button
+    class="float-right button primary mr-2">Show Final Result</button
   >
     {/if} <button
       on:click={openJudgeScore}
       title="use this button to upload scores only when judges screen has an issue"
-      class="float-right button primary">Input Scores</button
+      class="float-right button primary ">Input Scores</button
     >
   </h2>
-  <h3>Pool Name: {pool.poolName}</h3>
+  <h3> {pool.poolName}</h3>
   <div class="row">
     <div class="cell">
       {#if isFinal}
@@ -373,7 +379,7 @@ const showFinalResult =()=>{
         </div>
         <div class="cell-9 text-center">
           <button disabled={!submit} class="button success" on:click={upload}
-            >upload to screen</button
+            >upload to Database</button
           >
         </div>
       </div>
