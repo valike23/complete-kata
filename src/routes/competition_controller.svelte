@@ -271,7 +271,7 @@ const showFinalResult =()=>{
     resetVariables();
 
   
-    socket.on("judge scores", (data) => {
+    socket.on("judge scores",  (data) => {
       console.log(data);
       judges.forEach((judge, i) => {
         if (judge.id == data.judgeId) {
