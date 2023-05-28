@@ -304,14 +304,7 @@ const showFinalResult =()=>{
     >
   </h2>
   <h3> {pool.poolName}</h3>
-  <div class="row">
-    <div class="cell">
-      {#if isFinal}
-      <Timer minutes={minutes} seconds={0} on:timerend={handleTimerEnd} on:timerstart={handleTimerStart} controls={true} />
-   
-      {/if}
-      </div>
-  </div>
+  
   <div class="row">
     <div class="cell">
       <div class="card small">
@@ -321,6 +314,12 @@ const showFinalResult =()=>{
         </div>
       </div>
     </div>
+    {#if isTeamFinal}
+      <div class="cell">
+        <Timer size="bigger" minutes={minutes} seconds={0} on:timerend={handleTimerEnd} on:timerstart={handleTimerStart} controls={true} />
+   
+      </div>
+    {/if}
     <div class="cell float-right">
       <div class="card small bg-green">
         <div class="card-body">

@@ -4,7 +4,7 @@
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
-
+  export let size = "small";
   export let minutes = 0;
   export let makeBold = false;
   export let seconds = 0;
@@ -12,7 +12,7 @@
   export let auto = false;
   export let onTimerEnd;
   let timeRemaining = 0;
-let start = true;
+  let start = true;
   let interval;
 
   function startTimer() {
@@ -65,7 +65,11 @@ let start = true;
 <div class="container">
   <div class="row">
     <div class="col" style="text-align: center">
-      <h1 class:bold-text={makeBold == true} class="timer-red">
+      <h1
+        class:bigger={size == "bigger"}
+        class:bold-text={makeBold == true}
+        class="timer-red"
+      >
         {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10
           ? `0${seconds}`
           : seconds}
@@ -76,19 +80,27 @@ let start = true;
     <div class="row">
       <div class="col">
         {#if start}
-        <button style="width:100%" class="button primary mr-2 btn-block" on:click={startTimer}>Start Timer</button>
+          <button
+            style="width:100%"
+            class="button primary mr-2 btn-block"
+            on:click={startTimer}>Start Timer</button
+          >
         {:else}
-        <button style="width:100%" class="button alert mr-2" on:click={stopTimer}>Stop Timer</button
+          <button
+            style="width:100%"
+            class="button alert mr-2"
+            on:click={stopTimer}>Stop Timer</button
           >
         {/if}
-       
-      
       </div>
     </div>
   {/if}
 </div>
 
 <style>
+  .bigger {
+    font-size: 3rem;
+  }
   .timer-red {
     color: red;
   }
