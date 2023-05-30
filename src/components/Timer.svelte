@@ -7,6 +7,7 @@
   export let size = "small";
   export let minutes = 0;
   export let makeBold = false;
+  export let isStop = false;
   export let seconds = 0;
   export let milliseconds = 0; // New variable for milliseconds
   export let controls = false;
@@ -15,6 +16,7 @@
   let timeRemaining = 0;
   let start = true;
   let interval;
+  $:{if(isStop){stopTimer(); console.log('timer stopped')} }
 
   function startTimer() {
     start = false;

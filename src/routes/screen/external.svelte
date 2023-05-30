@@ -12,6 +12,7 @@
   let finalResult = {};
   let result = {};
   let athletes = [];
+  let isStop = false;
   let athlete = {};
   athlete.result = 0;
   athlete.club = {};
@@ -97,12 +98,12 @@
     })
     socket.on("end-timer", (data) => {
       endClock = true;
-      minutes = 0;
-      seconds = 2;
+      isStop = true;
       console.log(data, "end clock variable ", endClock);
     });
     socket.on("timer-start", (data) => {
       minutes = data.minutes;
+      isStop = false;
       console.log("minute", minutes);
       timer = true;
     });
@@ -370,6 +371,7 @@
               <Timer
                 {minutes}
                 {seconds}
+                {isStop}
                 makeBold={false}
                 on:timerend={handleTimerEnd}
                 on:timerstart{handleTimerStart}
