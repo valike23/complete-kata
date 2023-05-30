@@ -370,7 +370,7 @@
               <Timer
                 {minutes}
                 {seconds}
-                makeBold={true}
+                makeBold={false}
                 on:timerend={handleTimerEnd}
                 on:timerstart{handleTimerStart}
                 auto={true}

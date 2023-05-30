@@ -8,6 +8,7 @@
   export let minutes = 0;
   export let makeBold = false;
   export let seconds = 0;
+  export let milliseconds = 0; // New variable for milliseconds
   export let controls = false;
   export let auto = false;
   export let onTimerEnd;
@@ -19,24 +20,29 @@
     start = false;
     dispatch("timerstart");
     interval = setInterval(() => {
-      if (seconds === 0) {
-        if (minutes === 0) {
-          clearInterval(interval);
-          if (onTimerEnd) {
-            onTimerEnd();
+      if (milliseconds === 0) { // Check if milliseconds is zero
+        if (seconds === 0) {
+          if (minutes === 0) {
+            clearInterval(interval);
+            if (onTimerEnd) {
+              onTimerEnd();
+            } else {
+              dispatch("timerend");
+            }
           } else {
-            dispatch("timerend");
+            minutes--;
+            seconds = 59;
           }
         } else {
-          minutes--;
-          seconds = 59;
+          seconds--;
         }
+        milliseconds = 99; // Reset milliseconds to 99
       } else {
-        seconds--;
+        milliseconds--; // Decrease milliseconds by 1
       }
 
       timeRemaining = minutes * 60 + seconds;
-    }, 1000);
+    }, 10); // Decreased interval to 10 milliseconds for smoother animation
   }
 
   function stopTimer() {
@@ -48,6 +54,7 @@
 
   function resetTimer() {
     clearInterval(interval);
+    milliseconds = 0;
     seconds = 0;
     minutes = 0;
     timeRemaining = 0;
@@ -72,7 +79,7 @@
       >
         {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10
           ? `0${seconds}`
-          : seconds}
+          : seconds}.{milliseconds < 10 ? `0${milliseconds}` : milliseconds}
       </h1>
     </div>
   </div>

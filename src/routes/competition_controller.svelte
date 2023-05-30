@@ -315,7 +315,7 @@ const showFinalResult =()=>{
       </div>
     </div>
     {#if isTeamFinal}
-      <div class="cell">
+      <div class="cell mb-4">
         <Timer size="bigger" minutes={minutes} seconds={0} on:timerend={handleTimerEnd} on:timerstart={handleTimerStart} controls={true} />
    
       </div>
