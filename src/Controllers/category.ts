@@ -16,16 +16,16 @@ export interface Icategory {
     createdAt?: Date;
     updatedAt?: Date;
 }
-  export class Category extends Model {
+export class Category extends Model {
     declare id: number;
     declare categoryName: string;
     declare round: number;
     declare isDrafted: boolean;
     declare competitionId: number;
     declare gender: string
-  };
+};
 
-  
+
 Category.init({
     id: {
         type: DataTypes.BIGINT,
@@ -33,43 +33,43 @@ Category.init({
         primaryKey: true
 
     },
-    categoryName:{
+    categoryName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
 
     },
 
-  round: {
-    type: DataTypes.SMALLINT,
-    defaultValue: 1
-  },
-    competitionId:{
+    round: {
+        type: DataTypes.SMALLINT,
+        defaultValue: 1
+    },
+    competitionId: {
         type: DataTypes.BIGINT,
     },
-    isDrafted:{
+    isDrafted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-        
+
 
     },
-    gender:{
+    gender: {
         type: DataTypes.STRING,
         defaultValue: "none"
     }
-   
-},{sequelize, modelName: 'category'});
+
+}, { sequelize, modelName: 'category' });
 
 Category.hasMany(Entry);
 Category.hasMany(Pool);
 Category.sync();
 
 
-export const createCategory = async (category: any)=>{
+export const createCategory = async (category: any) => {
     try {
-       const resp = await Category.create(category);
-       return {status: 'success', body: resp}
+        const resp = await Category.create(category);
+        return { status: 'success', body: resp }
     } catch (error) {
-        return {status: 'failed', body: error}
+        return { status: 'failed', body: error }
     }
 }
 
