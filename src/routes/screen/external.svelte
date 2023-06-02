@@ -99,6 +99,7 @@
     socket.on("end-timer", (data) => {
       endClock = true;
       isStop = true;
+      timer = false;
       console.log(data, "end clock variable ", endClock);
     });
     socket.on("timer-start", (data) => {
@@ -116,7 +117,9 @@
         finalResult = resp.data;
         console.log('final result', finalResult);
         let promises = [];
+       
         finalResult.entries.forEach((entry, i)=>{
+          finalResult.entries[0].pool_entries.total
           finalResult.entries[i].club = {};
           
           promises.push(axios.get("api/club?id=" + entry.clubId)) ;
@@ -130,6 +133,9 @@
 
           })
         }
+         // Sort finalResult.entries based on pool_entries.total in descending order
+      finalResult.entries.sort((a, b) => b.pool_entries.total - a.pool_entries.total);
+  
       } catch (error) {
         console.log(error);
       }
@@ -186,6 +192,10 @@
       show = "result";
       console.log(data);
       pool = data.pool;
+      isStop = true;
+      minutes = 5;
+      seconds = 0;
+
       athlete = data.athlete;
       judges = data.judges;
       result = data.score;
