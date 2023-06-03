@@ -99,7 +99,7 @@
     socket.on("end-timer", (data) => {
       endClock = true;
       isStop = true;
-      timer = false;
+      //timer = false;
       console.log(data, "end clock variable ", endClock);
     });
     socket.on("timer-start", (data) => {
@@ -139,6 +139,9 @@
       } catch (error) {
         console.log(error);
       }
+    });
+    socket.on("reset-timer",async (data)=>{
+      location.reload();
     });
     socket.on("update", (data) => {});
     socket.on("start judge", async (data) => {

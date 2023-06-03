@@ -138,12 +138,17 @@ const showFinalResult =()=>{
     let body = {
       total: result,
     };
-    if(!isFinal) socket.emit("result", {
+    if(!isFinal) {socket.emit("result", {
       athlete: controller.currentAthlete,
       judges: judges,
       score: body,
       pool: fakePool,
-    });
+    });}
+    else{
+      socket.emit("reset-timer",{
+        
+      })
+    }
     const form = new FormData();
     form.append("body", JSON.stringify(body));
     try {

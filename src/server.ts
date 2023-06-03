@@ -32,6 +32,11 @@ io.of('/display').on('connection', (socket: Socket) => {
 		socket.broadcast.emit('final-result', data);
 
 	})
+	socket.on('reset-timer',(data)=>{
+		console.log('reset timereset timer', data);
+
+	})
+
 	socket.on('show-final',(data)=>{
 		console.log('show final here', data);
 		socket.broadcast.emit('show-final', data);
