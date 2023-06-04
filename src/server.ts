@@ -33,7 +33,15 @@ io.of('/display').on('connection', (socket: Socket) => {
 
 	})
 	socket.on('reset-timer',(data)=>{
-		console.log('reset timereset timer', data);
+		console.log('reset timer', data);
+
+		socket.broadcast.emit('reset-timer', data);
+
+	})
+	socket.on('show-round-tv',(data)=>{
+		console.log('showing round result on tv', data);
+
+		socket.broadcast.emit('show-round-tv', data);
 
 	})
 

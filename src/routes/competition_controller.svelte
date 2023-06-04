@@ -30,6 +30,7 @@
     win = {},
     judgesResp = [];
   let poolEntryId = 0;
+  let showScoresOnTV = false;
   let submit = false;
   let endofPool = false;
   let handleTimerEnd = () => {
@@ -79,6 +80,10 @@
     }
   };
 const showFinalResult =()=>{
+
+}
+const showRoundResultOnTV =()=>{
+  socket.emit('show-round-tv',{pool})
 
 }
   const startKata = () => {
@@ -138,6 +143,7 @@ const showFinalResult =()=>{
     let body = {
       total: result,
     };
+    showScoresOnTV = true;
     if(!isFinal) {socket.emit("result", {
       athlete: controller.currentAthlete,
       judges: judges,
@@ -146,7 +152,7 @@ const showFinalResult =()=>{
     });}
     else{
       socket.emit("reset-timer",{
-        
+
       })
     }
     const form = new FormData();
@@ -302,6 +308,10 @@ const showFinalResult =()=>{
     title="use this button to show finals result on TV screen"
     class="float-right button primary mr-2">Show Final Result</button
   >
+  <button
+  on:click={showRoundResultOnTV} 
+  class=" button primary mr-2"
+  title="show group standing on TV display">show Group Standing</button>
     {/if} <button
       on:click={openJudgeScore}
       title="use this button to upload scores only when judges screen has an issue"

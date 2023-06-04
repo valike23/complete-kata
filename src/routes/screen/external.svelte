@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import Timer from "../../components/Timer.svelte";
   import FinalShow from "../../components/screens/FinalShow.svelte";
+  import PoolResult from "../../components/screens/PoolResult.svelte";
   let socket, win;
   let pool = {};
   let club = {};
@@ -11,6 +12,7 @@
   let finalScreen = {};
   let finalResult = {};
   let result = {};
+  let groupPool ={};
   let athletes = [];
   let isStop = false;
   let athlete = {};
@@ -142,6 +144,11 @@
     });
     socket.on("reset-timer",async (data)=>{
       location.reload();
+    });
+    socket.on("show-round-tv",async (data)=>{
+     console.log('final round', data);
+     groupPool = data;
+     show = 'group-result';
     });
     socket.on("update", (data) => {});
     socket.on("start judge", async (data) => {
@@ -341,6 +348,8 @@
     </div>
     <br />
   </div>
+  {:else if show = "group-result"}
+  <PoolResult groupPool></PoolResult>
 {:else if show == "kata"}
   <div class="container mb-4 pb-4">
     <div
