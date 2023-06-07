@@ -18,7 +18,6 @@
     EnotificationType,
     handleNotification,
   } from "../../functions/browserFunctions";
-  import { mergeArrays } from "../../functions/severShared";
   export let resp;
   let categories = resp.categories;
   let loading = false;
@@ -47,7 +46,7 @@
       goto('categories/progress?id=' +  category.id + '&round=' + category.round + '&name='+  category.categoryName) ;
     });
     
-    console.log(mergeArrays(workPools));
+    //console.log(mergeArrays(workPools));
   }
 
   const draftPools = async (category) => {

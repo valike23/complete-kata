@@ -7,63 +7,62 @@ import { addEntry, Entry, Ientry } from "../../../Controllers/entries";
 
 
 
-export  async function post (req, res) {
+export async function post(req, res) {
     try {
         const body = JSON.parse(req.fields.body);
-        const activeCompetition = await  Competition.findOne({where:{active: true}});
-        if(activeCompetition.id){
+        const activeCompetition = await Competition.findOne({ where: { active: true } });
+        if (activeCompetition.id) {
             console.log('active here:', activeCompetition);
             body.competitionId = activeCompetition.id;
             const data = await addEntry(body);
             console.log(data, body);
             res.json(data);
         }
-       
 
-        
+
+
     } catch (error) {
         console.log(error);
         res.status(503).json(error);
     }
 }
-export async function put(req, res){
+export async function put(req, res) {
     try {
         const categoryId = Number(req.query.id);
         const workbook = readFile(req.files.excel.path);
-        const activeCompetition = await  Competition.findOne({where:{active: true}});
+        const activeCompetition = await Competition.findOne({ where: { active: true } });
         const clubs = await Club.findAll();
-        console.log('clubs here: ',clubs);
-       if(activeCompetition){
-        if(clubs){
-            let sheet:any[] = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            sheet.forEach((athlete,i)=>{
-              athlete.categoryId = categoryId;
-              athlete.competitionId = activeCompetition.id;
-             
-              athlete.club = athlete.club.toLowerCase();
-              clubs.forEach((club)=>{
-                if(club.clubName.toLowerCase() == athlete.club){
-                    athlete.clubId = club.id;
-                    delete(sheet[i].club);
+        console.log('clubs here: ', clubs);
+        if (activeCompetition) {
+            if (clubs) {
+                let sheet: any[] = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                sheet.forEach((athlete, i) => {
+                    athlete.categoryId = categoryId;
+                    athlete.competitionId = activeCompetition.id;
+                    athlete.club = athlete.club.toLowerCase();
+                    clubs.forEach((club) => {
+                        if (club.clubName.toLowerCase() == athlete.club) {
+                            athlete.clubId = club.id;
+                            delete (sheet[i].club);
+                        }
+                    });
+
+                });
+
+                try {
+                    console.log('the final sheet', sheet);
+                    const resp = await Entry.bulkCreate(sheet);
+
+                    res.json(resp);
+                } catch (error) {
+                    console.log(error);
+                    res.status(503).json(error);
                 }
-              });
-              
-            });
-
-       try {
-        console.log('the final sheet', sheet);
-        const resp = await  Entry.bulkCreate(sheet);
-    
-        res.json(resp);
-       } catch (error) {
-        console.log(error);
-        res.status(503).json(error);
-       }
+            }
         }
-       }
 
 
-     
+
     } catch (error) {
         console.log(error);
         res.status(503).json(error);
@@ -71,23 +70,25 @@ export async function put(req, res){
 }
 
 
-export async function get(req, res){
+export async function get(req, res) {
     try {
         const clubs = await Club.findAll();
-        if(clubs){
-            const activeCompetition = await  Competition.findOne({where:{active: true}});
-            if(activeCompetition){
-                
-               const categories = await Category.findAll({where:{competitionId: activeCompetition.id},
-                 include:[{model: Entry}]});
+        if (clubs) {
+            const activeCompetition = await Competition.findOne({ where: { active: true } });
+            if (activeCompetition) {
+
+                const categories = await Category.findAll({
+                    where: { competitionId: activeCompetition.id },
+                    include: [{ model: Entry }]
+                });
                 const entries = [];
-                categories.forEach((category: Icategory, i)=>{
-                    
-                    category.entries.forEach((entry)=>{
+                categories.forEach((category: Icategory, i) => {
+
+                    category.entries.forEach((entry) => {
                         let myEntry: Ientry = {};
                         myEntry.id = entry.id;
-                        clubs.forEach((club)=>{
-                            if(club.id == entry.clubId){
+                        clubs.forEach((club) => {
+                            if (club.id == entry.clubId) {
                                 myEntry.clubName = club.clubName;
                                 myEntry.flag = club.flag;
                             }
@@ -99,9 +100,9 @@ export async function get(req, res){
                         myEntry.createdAt = entry.createdAt;
                         myEntry.name = entry.name;
                         myEntry.updatedAt = entry.updatedAt;
-                        
+
                         entries.push(myEntry);
-                       
+
                     })
                 });
                 console.log('entries', entries);
@@ -109,18 +110,18 @@ export async function get(req, res){
             }
 
         }
-       
-      
+
+
     } catch (error) {
         console.log(error);
         res.json({});
     }
 }
 
-export async function patch(req, res){
+export async function patch(req, res) {
     try {
         const body = JSON.parse(req.fields.body);
-        const resp = await Entry.update(body, {where:{id: req.query.id}});
+        const resp = await Entry.update(body, { where: { id: req.query.id } });
         console.log(resp);
         res.json(resp);
     } catch (error) {
@@ -131,9 +132,9 @@ export async function patch(req, res){
 
 export async function del(req, res) {
     try {
-     const resp = await Entry.destroy({where:{id: req.query.id}});
-     res.json(resp);
+        const resp = await Entry.destroy({ where: { id: req.query.id } });
+        res.json(resp);
     } catch (error) {
-       res.status(503).json(error);
+        res.status(503).json(error);
     }
 }

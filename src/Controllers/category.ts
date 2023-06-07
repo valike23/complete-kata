@@ -23,6 +23,7 @@ export class Category extends Model {
     declare isDrafted: boolean;
     declare competitionId: number;
     declare gender: string
+    pools?: Pool[];
 };
 
 

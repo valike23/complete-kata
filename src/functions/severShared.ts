@@ -4,18 +4,25 @@ export interface ImodelResp {
   status: string;
   body: any
 }
-export function processEntriesArray(pools: any[], name, round) {
-  let finalArray = [];
-  pools.forEach((pool, i) => {
-    const resp = sortEntriesByTotal(pool.entries);
-    pools[i].entries = resp;
+export function processEntriesArray(pools: any[], name, round, entires) {
+  const finalArray = JSON.parse(JSON.stringify(pools));
+  finalArray.forEach((pool, i) => {
+    if(pool.round == round){
+      console.log('entry no', i ,' :', entires[i])
+      const resp = sortEntriesByTotal(entires[i]);
+      finalArray[i].entries = resp;
+    }
+    
   })
-  pools.forEach((pool, i) => {
+  finalArray.forEach((pool, i) => {
+    console.log('the pool thing', pool);
     const resp = reduceEntries(pool.entries);
-    pools[i].entries = resp;
+    finalArray[i].entries = resp;
   })
 
-  return generateNewPools(pools, round, name);
+  console.log('reduced array', finalArray);
+
+  return generateNewPools(finalArray, round, name);
 }
 
 //sort base on total scores
@@ -40,7 +47,8 @@ function generateNewPools(pools: any[], round, name) {
     if (pools.length <= 2) {
       if (pools[0].entries.length < 4 && pools[1].entries.length < 4) return finalBout(pools, name, round);
       // handle 2 pools but4 entries
-      if(pools[0].entries.length == 4 ) combine2x4x(pools, name, round);
+      if(pools[0].entries.length == 4 ) return combine2x4x(pools, name, round);
+      
 
     }
     else {
@@ -114,20 +122,25 @@ function combine4x8x(pools: any[], name, round){
 }
 
 function combine2x4x(pools: any[], name, round){
+  console.log('entered here2', pools);
   let newPools: any[] = [];
-  let pool1 = {poolName: name + 'R' + Number(round) + 1 + '-G1' ,
+  let pool1 = {poolName: name + ' -R' + (Number(round) + 1) + '-G1' ,
   round: Number(round) + 1,
   entries: []};
-  let pool2 = {poolName: name +  'R' + Number(round) + 1 +'-G2' ,
+  let pool2 = {poolName: name +  ' -R' + (Number(round) + 1 )+'-G2' ,
   round: Number(round) + 1,
   entries: []};
-  pools[0].entries((entry)=>{
+  console.log('pools test', pool1, pool2);
+  console.log(pools[0].entries);
+  pools[0].entries.forEach((entry)=>{
+    console.log('entry here', entry);
     pool1.entries.push(entry);
   });
-  pools[1].entries((entry)=>{
+  pools[1].entries.forEach((entry)=>{
     pool2.entries.push(entry);
   });
   newPools.push(pool1);
   newPools.push(pool2);
+  console.log('new pools', newPools);
   return newPools;
 }
