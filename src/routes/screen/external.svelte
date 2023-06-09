@@ -411,11 +411,11 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-2 red text-center">
+      <div class="col-3 red text-center">
         <h1 style="font-size: 70px;font-weight:700" class="pt-4 pb-4">{Number(result.total).toFixed(2)}</h1>
       </div>
       
-      <div class="col-7">
+      <div class="col-6">
         <h1 style="font-size: 50px;" class="pt-4 pb-4">{athlete.name || "test athlete name"}</h1>
         <h1 style="font-size:60px" class="pl-3 pr-3 pt-3 pb-3">
           <img
