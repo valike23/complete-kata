@@ -55,6 +55,7 @@
   };
   const activatePool = async (pool) => {
     try {
+      alert("NOTE!!!!!!!!: Before activating pools, ensure you have set the kata for all atlethes in this pool for the software to be glinchless...")
       if (
         !confirm(`Do you want to activate pool ${pool.poolName} for the event?`)
       )
