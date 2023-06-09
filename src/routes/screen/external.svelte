@@ -412,7 +412,7 @@
     </div>
     <div class="row">
       <div class="col-2 red text-center">
-        <h1 style="font-size: 70px;" class="pt-4 pb-4">{Number(result.total).toFixed(2)}</h1>
+        <h1 style="font-size: 70px;font-weight:700" class="pt-4 pb-4">{Number(result.total).toFixed(2)}</h1>
       </div>
       
       <div class="col-7">
