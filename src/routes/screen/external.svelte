@@ -407,37 +407,37 @@
   <div class="container pt-5">
     <div class="row mt-5 text-center justify-content-center">
       <div class="col-12" style="background-color: gray;">
-        <h1>{pool.poolName}</h1>
+        <h1 style="font-size: 40px;" class="pt-4 pb-4">{pool.poolName}</h1>
       </div>
     </div>
     <div class="row">
       <div class="col-2 red text-center">
-        <h1>{Number(result.total).toFixed(2)}</h1>
+        <h1 style="font-size: 70px;" class="pt-4 pb-4">{Number(result.total).toFixed(2)}</h1>
       </div>
       <div class="col-7">
-        <h1>{athlete.name || "test athlete name"}</h1>
-        <h1>
+        <h1 style="font-size: 50px;" class="pt-4 pb-4">{athlete.name || "test athlete name"}</h1>
+        <h1 style="font-size:60px" class="pl-3 pr-3 pt-3 pb-3">
           <img
             src={club.flag || "images/HAWKtm.png"}
-            class="flag mr-3"
+            class="flag mr-3 pt-4 pb-4 pr-2 pl-2"
             alt="flag"
           />
           {club.clubName || "test club name"}
         </h1>
       </div>
       <div class="col-3">
-        <img class="float-right qrcode" src="images/qr.jpeg" alt="" />
+        <img style="height:300px; width: 300px" class="float-right qrcode" src="images/qr.jpeg" alt="" />
       </div>
     </div>
 
     <div class="mt-2">
       <span class="s-h3 soft-border">Scores</span>
       {#each judges as judge}
-        <span id={"ap" + judge.id} class="s-h3 soft-border s-border"
+        <span id={"ap" + judge.id} style="font-size: 60px;" class="s-h3 soft-border pt-3 pb-3 s-border"
           >{judge.RESULT || ""}</span
         >
       {/each}
-      <span class="s-h3 soft-border">
+      <span style="font-size: 70px" class="s-h3 soft-border  pt-3 pb-3">
         {Number(result.total).toFixed(2)}
       </span>
     </div>
