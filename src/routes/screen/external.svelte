@@ -121,7 +121,8 @@
         let promises = [];
        
         finalResult.entries.forEach((entry, i)=>{
-          finalResult.entries[0].pool_entries.total
+          finalResult.entries[0].pool_entries.total;
+          
           finalResult.entries[i].club = {};
           
           promises.push(axios.get("api/club?id=" + entry.clubId)) ;
@@ -132,6 +133,9 @@
         if(clubResp){
           clubResp.forEach((resp, i)=>{
             finalResult.entries[i].club = resp.data;
+            if(i == 0)finalResult.entries[i].belt = 'red';
+            finalResult.entries[i].belt = 'blue';
+            
 
           })
         }
@@ -474,7 +478,8 @@
       <div class="cell-5" />
     </div>
     <div class="row">
-      <div class="cell-9 bg-red fg-white text-center">
+      <div class:bg-red={finalResult.entries[0].belt =='red'} 
+      class:bg-blue={finalResult.entries[0].belt =='blue'} class="cell-9 fg-white text-center">
         <h1>{finalResult.entries[0].club.clubName}</h1>
       </div>
       <div class="cell-3 text-center">
@@ -492,7 +497,8 @@
       <div class="cell-5" />
     </div>
     <div class="row">
-      <div class="cell-9 bg-blue fg-white text-center">
+      <div class:bg-red={finalResult.entries[1].belt =='red'}
+       class:bg-blue={finalResult.entries[1].belt =='blue'} class="cell-9  fg-white text-center">
         <h1>{finalResult.entries[1].club.clubName}</h1>
       </div>
       <div class="cell-3 text-center">
