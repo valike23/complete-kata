@@ -133,8 +133,8 @@
         if(clubResp){
           clubResp.forEach((resp, i)=>{
             finalResult.entries[i].club = resp.data;
-            if(i == 0)finalResult.entries[i].belt = 'red';
-            finalResult.entries[i].belt = 'blue';
+            finalResult.entries[0].belt = 'red';
+            finalResult.entries[1].belt = 'blue';
             
 
           })
