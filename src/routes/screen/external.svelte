@@ -393,6 +393,7 @@
           <div class="row">
             <div class="cell">
               <Timer
+              size="bigger"
                 {minutes}
                 {seconds}
                 {isStop}
