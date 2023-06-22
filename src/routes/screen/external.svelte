@@ -353,17 +353,17 @@
     <br />
   </div>
 {:else if show == "kata"}
-  <div class="container mb-4 pb-4">
+  <div class="container mb-4 mt-4 pb-4 kata">
     <div
       class="row mt-5 text-center justify-content-center row"
-      style="background-color: gray;"
+      style="background-color: gray; height:12vh"
     >
       <div class="cell-12">
         <h1>{pool.poolName}</h1>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="height: 50vh;">
       <div class="cell-2 red" />
       <div class="cell-7">
         <h1>{athlete.name}</h1>
@@ -581,6 +581,11 @@
 {/if}
 
 <style>
+ 
+.kata h1 {
+  font-size: 3.45vw;
+  font-weight: 600;
+}
   .flag {
     width: 90px;
   }
