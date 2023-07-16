@@ -59,21 +59,26 @@
       let resp = await axios.put(
         `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
       );
-      if (resp) {
+      console.log("the response", resp.data);
+      console.log("the judges: ", judges);
+      if (resp.data) {
         poolEntryId = resp.data.id;
-        let judgesResult = resp.data;
+        const judgesResult = resp.data;
         for (let index = 0; index < judges.length; index++) {
           const judge = judges[index];
           for (let j = 0; j < judgesResult.judges.length; j++) {
-            const judgeResp = judgesResp[j];
+            const judgeResp = judgesResult.judges[j];
             if (judgeResp.judgeId == judge.id) {
               judges[index].RESULT = judgeResp.RESULT;
+              if(judges[index].RESULT == 0) judges[index].RESULT = "0";
               break;
             }
-            judges[index].RESULT = 0;
+            judges[index].RESULT =0;
           }
-          setup();
+        
         }
+        console.log('reset judges: ', judges);
+          setup();
       }
     } catch (error) {
       console.log(error);
@@ -284,12 +289,17 @@ const showRoundResultOnTV =()=>{
   
     socket.on("judge scores",  (data) => {
       console.log(data);
-      judges.forEach((judge, i) => {
+      if(!data.RESULT){
+        alert(data.RESULT);
+      }
+      else{
+        judges.forEach((judge, i) => {
         if (judge.id == data.judgeId) {
           judges[i].RESULT = data.RESULT;
         }
       });
       setup();
+      }
     });
   });
 </script>

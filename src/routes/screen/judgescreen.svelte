@@ -10,46 +10,23 @@
   let pool = {};
   let disqualified = async () => {
     let res = confirm("do you want to disqualify this athlete?");
-    try {
-      if (res) {
-        let judgeResult = {
-          athlete_id: athlete.id,
-          RESULT: 0,
-          judge_id: judge.id,
-          pool_id: pool.id,
-        };
-        let form = new FormData();
-        form.append("judge", JSON.stringify(judgeResult));
-        let data = await (await axios.post(`api/judge_pool`, form)).data;
-        if (data) {
-          let resd = await win.Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "scores uploaded successfully",
-          });
-          if (resd) {
-            scores = 7.0;
-            screen = "";
-            socket.emit("judge scores", judgeResult);
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      win.Swal.fire({
-        icon: "error",
-        title: "oops!!!",
-        text: "something went wrong...., please contact support.",
-      });
-    }
+    if(res) await uploadScore(0);
   };
-  let submitScore = async () => {
+  const submitScore = async () => {
     let res = confirm("do you want to upload this athlete's score?");
     scores = Number(document.getElementById("scores").value);
+    if (scores == 0) {
+      await disqualified();
+      return;
+    }
 
     console.log(scores);
+    await uploadScore(scores);
+  };
 
+  const uploadScore = async (scores) => {
     try {
+      const res = confirm("Do you want disqualify this athlete?");
       if (res) {
         let judgeResult = {
           entryId: athlete.id,
@@ -116,14 +93,14 @@
           if (input.val() < 5) input.val(0);
         });
       }, 3000);
-      try {
-        let response = await axios.get(
-          `api/athlete?id=${athlete.id}&status=single`
-        );
+      // try {
+      //   let response = await axios.get(
+      //     `api/athlete?id=${athlete.id}&status=single`
+      //   );
 
-        console.log(data);
-        athlete = response.data;
-      } catch (error) {}
+      //   console.log(data);
+      //   athlete = response.data;
+      // } catch (error) {}
     });
     let userString = sessionStorage.getItem("kataUser");
     if (userString == undefined) {
@@ -254,7 +231,6 @@
                   data-fixed="1"
                 />
               </div>
-            
             </div>
           </div>
         </div>
@@ -362,7 +338,6 @@
                   style="border: 1px solid red; background-color: transparent; font-size: 28px; color: white;"
                 />
               </div>
-            
             </div>
           </div>
         </div>
