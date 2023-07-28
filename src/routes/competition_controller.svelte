@@ -305,14 +305,19 @@
       console.log(data);
       if (!data.RESULT) {
         alert('A judge just disqualified an athlete that a look at the board to verify');
+        judges.forEach((judge, i) => {
+          if (judge.id == data.judgeId) {
+            judges[i].RESULT = Number(data.RESULT).toString();
+          }
+        });
       } else {
         judges.forEach((judge, i) => {
           if (judge.id == data.judgeId) {
             judges[i].RESULT = data.RESULT;
           }
         });
-        setup();
       }
+      setup();
     });
   });
 </script>
