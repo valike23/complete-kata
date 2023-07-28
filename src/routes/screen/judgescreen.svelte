@@ -149,6 +149,9 @@
     }
   };
 </script>
+<svelte:head>
+  <title>KATA:: kata judge screen app</title>
+</svelte:head>
 
 <div class="container-fluid">
   {#if isLogged}
