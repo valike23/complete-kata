@@ -26,7 +26,7 @@
 
   const uploadScore = async (scores) => {
     try {
-      const res = confirm("Do you want disqualify this athlete?");
+      const res = confirm(`you are about to upload a scores of ${scores}`);
       if (res) {
         let judgeResult = {
           entryId: athlete.id,
@@ -150,7 +150,7 @@
   };
 </script>
 <svelte:head>
-  <title>KATA:: kata judge screen app</title>
+  <title>KATA:: {isLogged? judge.judgeName: "kata judge screen app"}</title>
 </svelte:head>
 
 <div class="container-fluid">

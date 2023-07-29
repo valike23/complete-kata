@@ -97,6 +97,7 @@
   const setup = function () {
     let tempJudges = JSON.parse(JSON.stringify(judges));
     let RESULT = 0;
+    let isDisqualifed = false;
     let isComplete = false;
     //confirm if the athlete is complete
     for (let index = 0; index < judges.length; index++) {
@@ -109,9 +110,13 @@
       }
     }
     judges.forEach((j) => {
+      if(Number(j.RESULT) === 0) isDisqualifed = true;
       RESULT += Number(j.RESULT);
     });
+
+    if(isDisqualifed) RESULT = 0;
     total = RESULT;
+    
     if (isComplete) {
       submit = true;
       tempJudges.sort((a, b) => {
@@ -125,10 +130,11 @@
       const tph = "tp" + highestResult.id;
       document.getElementById(tpl).style.color = "red";
       document.getElementById(tph).style.color = "red";
-      console.log("highest score", highestResult);
       RESULT = RESULT - highestResult.RESULT - lowstResult.RESULT;
+      if(isDisqualifed) RESULT = 0;
       result = RESULT;
     } else {
+      if(isDisqualifed) RESULT = 0;
       result = RESULT;
     }
   };
