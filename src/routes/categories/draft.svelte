@@ -89,17 +89,21 @@
   };
   const generatePool = () => {
     console.log(entries);
-    if(entries.length < 4) {
-      console.log('this is less than 4 entries')
-      return pools.push({ poolName:"Finals "+ name + " " + "Medal" , entries: [] });
-    }
-      else{
-        console.log('this is more than 4 entries');
-        for (let index = 0; index < totalPools; index++) {
-      pools.push({ poolName: name + " " + "R1-G" + (index + 1), entries: [] });
-    }
+    if (entries.length < 4) {
+      console.log("this is less than 4 entries");
+      return pools.push({
+        poolName: "Finals " + name + " " + "Medal",
+        entries: [],
+      });
+    } else {
+      console.log("this is more than 4 entries");
+      for (let index = 0; index < totalPools; index++) {
+        pools.push({
+          poolName: name + " " + "R1-G" + (index + 1),
+          entries: [],
+        });
       }
-    
+    }
   };
   const switchseed = (seedNumber) => {
     if (seedNumber == 4) {
@@ -139,69 +143,39 @@
     });
   };
   const addSeedContent = () => {
-    let firstIndex = 0;
-    let lastIndex = pools.length - 1;
-    if (seeding == 1) {
-      resolveSeeding();
-      let isOdd = actualSeed.length % 2;
-      console.log("isodd", isOdd);
-      entries.forEach((entry, i) => {
-        if (i == 0 || i % 2 == 0) {
-          if (isOdd) {
-            pools[lastIndex].entries.push(entry);
-            lastIndex = lastIndex - 1;
-          } else {
-            pools[firstIndex].entries.push(entry);
-            firstIndex = firstIndex + 1;
-          }
-        } else {
-          if (isOdd) {
-            pools[firstIndex].entries.push(entry);
-            firstIndex = firstIndex + 1;
-          } else {
-            pools[lastIndex].entries.push(entry);
-            lastIndex = lastIndex - 1;
-          }
-        }
-
-        if (lastIndex == firstIndex) {
-          firstIndex = 0;
-          lastIndex = pools.length - 1;
-        }
-      });
-      pools = pools;
-      disabled = false;
-    } else {
-      if(pools.length == 1){
-        pools[0].entries = entries;
-        pools = pools;
-        disabled = false;
-        return;
-      }
-      entries.forEach((entry, i) => {
-        if (i == 0 || i % 2 == 0) {
-          pools[firstIndex].entries.push(entry);
-          firstIndex = firstIndex + 1;
-        } else {
-          pools[lastIndex].entries.push(entry);
-          lastIndex = lastIndex - 1;
-        }
-        if (lastIndex == firstIndex) {
-          firstIndex = 0;
-          lastIndex = pools.length - 1;
-        }
-      });
-      pools = pools;
-      disabled = false;
+  // Reset the pools to an empty state
+  pools = [];
+  generatePool();
+  entries.forEach((entry) => {
+    if (!actualSeed.some((existingEntry) => existingEntry.id === entry.id)) {
+      // Check if the entry with the same id already exists in actualSeed
+      actualSeed.push(entry);
     }
-    pools.forEach((pool, i)=>{
-      pools[i] = randomizePool(pool);
+  });
+  const totalEntries = actualSeed.length;
+  const averageEntriesPerPool = Math.ceil(totalEntries / totalPools);
 
-    })
-  };
+  // Distribute the entries from actualSeed into pools
+  let poolIndex = 0;
+  actualSeed.forEach((entry, i) => {
+    if (pools[poolIndex].entries.length >= averageEntriesPerPool) {
+      poolIndex = (poolIndex + 1) % totalPools;
+    }
+
+    pools[poolIndex].entries.push(entry);
+    poolIndex = (poolIndex + 1) % totalPools;
+  });
+
+  // Shuffle the pools (optional)
+  randomizePools();
+
+  disabled = false;
+};
+
+
   generatePool();
   const randomizePool = (pool) => {
-    console.log('pool to randomize', pool);
+    console.log("pool to randomize", pool);
     // Define the randomizing function
     function randomize(a, b) {
       return Math.random() - 0.5;
@@ -212,12 +186,11 @@
     console.log(pool);
     return pool;
   };
-  const randomizePools =()=>{
-    pools.forEach((pool, i)=>{
+  const randomizePools = () => {
+    pools.forEach((pool, i) => {
       pools[i] = randomizePool(pool);
-
-    })
-  }
+    });
+  };
   const submitDraft = async () => {
     console.log(pools);
     let promises = [];
@@ -309,11 +282,13 @@
     </div>
     <div class="cell-9 pl-5">
       <div class="row mb-5">
-      {#if pools.length > 0}
-      <div>
-        <button on:click={randomizePools} class="button primary">randomize pools</button>
-      </div>
-      {/if}
+        {#if pools.length > 0}
+          <div>
+            <button on:click={randomizePools} class="button primary"
+              >randomize pools</button
+            >
+          </div>
+        {/if}
         {#each pools as pool}
           <div class="cell-4">
             <div class="card">
