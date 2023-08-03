@@ -38,10 +38,20 @@ export async function put(req, res) {
 export async function patch(req, res) {
   try {
     
-    const judge = req.fields.body;
-    console.log("this judges", judge);
-    let resp = await Judge.update({password: judge},{where:{id: req.query.id}});
+    const {password, name} = req.fields;
+    console.log("this judges", name);
+    let resp: any = {};
+    if(password) {resp = await Judge.update({password},{where:{id: req.query.id}});
     res.json(resp);
+  }
+    else if(name) {resp = await Judge.update({judgeName: name},{where:{id: req.query.id}});
+    console.log("call namw", resp);
+    res.json(resp);
+  }
+  else{
+    res.status(400).json({msg:"bad request"})
+  }
+   
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

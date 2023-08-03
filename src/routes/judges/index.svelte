@@ -60,7 +60,7 @@
     try {
         let form = new FormData();
         console.log('password',judges[i].password);
-        form.append('body', judges[i].password);
+        form.append('password', judges[i].password);
         
         const resp = await axios.patch('api/judges?id=' + judges[i].id, form);
         if(resp){
@@ -73,12 +73,12 @@
  }
  const updateName =async (judge, i)=>{
     judges[i].edit = false;
-    console.log(judges[i]);
+    console.log('test judge',judges[i]);
 
     try {
         let form = new FormData();
         console.log('judgeName',judges[i].judgeName);
-        form.append('body', judges[i].judgeName);
+        form.append('name', judges[i].judgeName);
         
         const resp = await axios.patch('api/judges?id=' + judges[i].id, form);
         if(resp){
