@@ -57,3 +57,14 @@ export async function patch(req, res) {
     res.status(500).json(error);
   }
 }
+
+export async function del(req, res){
+  try {
+    console.log("the judge ID", req.query.id);
+   const resp = await Judge.destroy({where:{id: req.query.id}});
+   res.json(resp);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
