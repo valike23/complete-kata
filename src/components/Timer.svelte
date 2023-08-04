@@ -114,7 +114,7 @@
     color: red;
   }
   .bold-text {
-    font-weight: 900;
+    font-weight: 500;
     font-size: 180px;
   }
 </style>
