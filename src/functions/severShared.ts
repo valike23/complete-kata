@@ -86,9 +86,9 @@ function finalBout(pools: any[], name, round) {
   goldMedalBout.entries.push(pools[0].entries[0]);
   goldMedalBout.entries.push(pools[1].entries[0]);
   if (pools[0].entries.length > 1) firstBronzeMedalBout.entries.push(pools[0].entries[1]);
-  if (pools[1].entries.length > 1) firstBronzeMedalBout.entries.push(pools[1].entries[1]);
+  if (pools[1].entries.length > 1) firstBronzeMedalBout.entries.push(pools[1].entries[2]);
   if (pools[0].entries.length > 2) secondBronzeMedalBout.entries.push(pools[0].entries[2]);
-  if (pools[1].entries.length > 2) secondBronzeMedalBout.entries.push(pools[1].entries[2]);
+  if (pools[1].entries.length > 2) secondBronzeMedalBout.entries.push(pools[1].entries[1]);
   // add the new pools to the final pools array
   finPools.push(goldMedalBout);
   finPools.push(firstBronzeMedalBout);
