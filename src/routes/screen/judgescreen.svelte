@@ -10,7 +10,7 @@
   let pool = {};
   let disqualified = async () => {
     let res = confirm("do you want to disqualify this athlete?");
-    if(res) await uploadScore(0);
+    if (res) await uploadScore(0);
   };
   const submitScore = async () => {
     let res = confirm("do you want to upload this athlete's score?");
@@ -62,6 +62,9 @@
   };
   const reset = () => {
     scores = 7.0;
+    let dap = document.getElementById("scores");
+    let inputp = Metro.getPlugin(dap, "spinner");
+    inputp.val(7);
   };
   let athlete;
   let win;
@@ -79,10 +82,13 @@
       athlete.club = {};
       pool = data.pool;
       screen = "judge";
-
+      scores = 7.0;
+      let dap = document.getElementById("scores");
+      let inputp = Metro.getPlugin(dap, "spinner");
+      inputp.val(7);
       setTimeout(() => {
         let ap = document.getElementById("scores");
-        console.log(ap);
+        console.log("tools here :", ap);
         win.$(ap).on("plusClick", (e) => {
           console.log(e.detail);
           let input = Metro.getPlugin(ap, "spinner");
@@ -93,14 +99,6 @@
           if (input.val() < 5) input.val(0);
         });
       }, 3000);
-      // try {
-      //   let response = await axios.get(
-      //     `api/athlete?id=${athlete.id}&status=single`
-      //   );
-
-      //   console.log(data);
-      //   athlete = response.data;
-      // } catch (error) {}
     });
     let userString = sessionStorage.getItem("kataUser");
     if (userString == undefined) {
@@ -149,8 +147,9 @@
     }
   };
 </script>
+
 <svelte:head>
-  <title>KATA:: {isLogged? judge.judgeName: "kata judge screen app"}</title>
+  <title>KATA:: {isLogged ? judge.judgeName : "kata judge screen app"}</title>
 </svelte:head>
 
 <div class="container-fluid">
