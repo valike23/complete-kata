@@ -5,6 +5,7 @@ import { onMount } from "svelte";
 export let pool;
 let club1 = {};
 let club2 = {};
+let {length} =pool.entries;
 console.log("final pool", pool);
 onMount(async () => {
     club1 = (await axios.get("api/club?id=" + pool.entries[0].clubId)).data;
@@ -22,18 +23,33 @@ onMount(async () => {
     </div>
     {#each pool.entries as entry, i}
     <div class="row large" style="border-bottom:2px solid white; border-right: 2px solid white">
-      <div class="col-12" class:red={i == 0} class:blue={i == 1}>
-        <h1 class="pl-3 font-weight-bold">
-          <span style="font-weight:800">{entry.name || "test athlete name"}</span>
-          <small style="color: white">
-            {#if i == 0}
-            ({club1.clubName})
-            {:else}
-            ({club2.clubName})
-            {/if}
-          </small>
-        </h1>
-      </div>
+    {#if length > 2}
+    <div class="col-12 red" >
+      <h1 class="pl-3 font-weight-bold">
+        <span style="font-weight:800">{entry.name || "test athlete name"}</span>
+        <small style="color: white">
+          {#if i == 0}
+          ({club1.clubName})
+          {:else}
+          ({club2.clubName})
+          {/if}
+        </small>
+      </h1>
+    </div>
+    {:else}
+    <div class="col-12" class:red={i == 0} class:blue={i == 1}>
+      <h1 class="pl-3 font-weight-bold">
+        <span style="font-weight:800">{entry.name || "test athlete name"}</span>
+        <small style="color: white">
+          {#if i == 0}
+          ({club1.clubName})
+          {:else}
+          ({club2.clubName})
+          {/if}
+        </small>
+      </h1>
+    </div>
+    {/if}
     </div>
     {/each}
   </div>
