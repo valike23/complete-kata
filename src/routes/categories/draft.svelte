@@ -34,12 +34,17 @@
   let seed;
   let pools = [];
   let totalPools = 0;
-  if (entries.length >= 1 && entries.length <= 3) totalPools = 1;
-  if (entries.length >= 4 && entries.length <= 24) totalPools = 2;
-  if (entries.length >= 25 && entries.length <= 48) totalPools = 4;
-  if (entries.length >= 49 && entries.length <= 96) totalPools = 8;
-  if (entries.length >= 97 && entries.length <= 192) totalPools = 16;
-  if (entries.length >= 193) totalPools = 32;
+  if (entries.length >= 1 && entries.length <= 3) {
+    totalPools = 1
+  }
+  else{
+    totalPools = 2
+  };
+   if (entries.length >= 4 && entries.length <= 24) totalPools = 2;
+   if (entries.length >= 25 && entries.length <= 48) totalPools = 4;
+   if (entries.length >= 49 && entries.length <= 96) totalPools = 8;
+   if (entries.length >= 97 && entries.length <= 192) totalPools = 16;
+   if (entries.length >= 193) totalPools = 32;
 
   const fixSeed = () => {
     console.log(seed);
