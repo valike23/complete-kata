@@ -19,6 +19,7 @@
     handleNotification,
   } from "../../functions/browserFunctions";
   export let pools;
+  pools = Array.isArray(pools) ? pools : [];
 
   const deletePool = async (pool) => {
     try {
@@ -136,7 +137,7 @@
           {#each pools as pool, i}
             <tr>
               <td>{i + 1}</td>
-              <td>{pool.poolName}</td>
+              <td>{pool.poolName || `Round ${pool.round || ""}`.trim()}</td>
               <td>{pool.createdAt}</td>
               <td>{pool.updatedAt}</td>
               <td

@@ -29,10 +29,13 @@
     judges = [],
     win = {},
     judgesResp = [];
+  judges = Array.isArray(judges) ? judges : [];
+  judgesResp = Array.isArray(judgesResp) ? judgesResp : [];
   let poolEntryId = 0;
   let showScoresOnTV = false;
   let submit = false;
   let endofPool = false;
+  const hasActivePool = !!pool;
   let handleTimerEnd = () => {
     console.log("timer end");
     socket.emit("end-timer", {});
@@ -43,10 +46,25 @@
   let socket = {};
   let result = 0;
   let total = 0;
+  let baseResult = 0;
+  let extraPoint = 0;
   let minutes = 5;
-  let fakePool = JSON.parse(JSON.stringify(pool));
-  delete fakePool.entries;
-  let controller = new competitionController(pool.entries);
+  const toScoreNumber = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : 0;
+  };
+  const formatScore = (value) => toScoreNumber(value).toFixed(2);
+  const updateDisplayedResult = (value) => {
+    baseResult = toScoreNumber(value);
+    result = baseResult + extraPoint;
+  };
+  let fakePool = hasActivePool ? JSON.parse(JSON.stringify(pool)) : {};
+  if (hasActivePool) {
+    delete fakePool.entries;
+  }
+  let controller = new competitionController(
+    hasActivePool && Array.isArray(pool.entries) ? pool.entries : []
+  );
   if (!controller.nextAthlete) {
     controller.nextAthlete = { name: "empty" };
   }
@@ -55,6 +73,7 @@
     endofPool = true;
   }
   const resetVariables = async () => {
+    if (!hasActivePool || !controller.currentAthlete.id) return;
     try {
       let resp = await axios.put(
         `api/judges/pool?poolId=${fakePool.id}&entryId=${controller.currentAthlete.id}`
@@ -85,9 +104,11 @@
   };
   const showFinalResult = () => {};
   const showRoundResultOnTV = () => {
+    if (!hasActivePool) return;
     socket.emit("show-round-tv", { pool });
   };
   const startKata = () => {
+    if (!hasActivePool) return;
     socket.emit("start judge", {
       athlete: controller.currentAthlete,
       pool: fakePool,
@@ -95,6 +116,12 @@
   };
 
   const setup = function () {
+    if (!judges.length) {
+      submit = false;
+      total = 0;
+      updateDisplayedResult(0);
+      return;
+    }
     let tempJudges = JSON.parse(JSON.stringify(judges));
     let RESULT = 0;
     let isDisqualifed = false;
@@ -110,8 +137,9 @@
       }
     }
     judges.forEach((j) => {
-      if(Number(j.RESULT) === 0) isDisqualifed = true;
-      RESULT += Number(j.RESULT);
+      const judgeScore = toScoreNumber(j.RESULT);
+      if (judgeScore === 0) isDisqualifed = true;
+      RESULT += judgeScore;
     });
 
     if(isDisqualifed) RESULT = 0;
@@ -128,18 +156,22 @@
       // wait here
       const tpl = "tp" + lowstResult.id;
       const tph = "tp" + highestResult.id;
-      document.getElementById(tpl).style.color = "red";
-      document.getElementById(tph).style.color = "red";
-      RESULT = RESULT - highestResult.RESULT - lowstResult.RESULT;
+      const lowestNode = document.getElementById(tpl);
+      const highestNode = document.getElementById(tph);
+      if (lowestNode) lowestNode.style.color = "red";
+      if (highestNode) highestNode.style.color = "red";
+      RESULT =
+        RESULT - toScoreNumber(highestResult.RESULT) - toScoreNumber(lowstResult.RESULT);
       if(isDisqualifed) RESULT = 0;
-      result = RESULT;
+      updateDisplayedResult(RESULT);
     } else {
       if(isDisqualifed) RESULT = 0;
-      result = RESULT;
+      updateDisplayedResult(RESULT);
     }
   };
   const showFinalsScore = () => {
     console.log("this is the final result release");
+    if (!hasActivePool) return;
     socket.emit("final-result", {
       pool: fakePool,
     });
@@ -186,6 +218,7 @@
     }
   };
   const openJudgeScore = () => {
+    if (!hasActivePool) return;
     let judgeList = ``;
     judges.forEach((element) => {
       let text = `<option value="${element.id}"> ${element.judgeName}</option>`;
@@ -261,12 +294,60 @@
       ],
     });
   };
+  const openExtraScoreModal = async () => {
+    if (!hasActivePool) return;
+    const modalResult = await win.Swal.fire({
+      title: "Add Extra Score",
+      input: "number",
+      inputLabel: "Enter an extra score between 0.1 and 3.0",
+      inputValue: extraPoint ? extraPoint.toFixed(1) : "",
+      inputAttributes: {
+        min: "0.1",
+        max: "3.0",
+        step: "0.1",
+      },
+      showCancelButton: true,
+      showDenyButton: true,
+      confirmButtonText: "Apply",
+      denyButtonText: "Clear",
+      inputValidator: (value) => {
+        if (value === "" || value === null) {
+          return "Enter a value between 0.1 and 3.0";
+        }
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) {
+          return "Enter a valid number";
+        }
+        if (numericValue < 0.1 || numericValue > 3.0) {
+          return "Extra score must be between 0.1 and 3.0";
+        }
+        return null;
+      },
+    });
+    if (modalResult.isDenied) {
+      extraPoint = 0;
+      updateDisplayedResult(baseResult);
+      return;
+    }
+    if (!modalResult.isConfirmed) return;
+    extraPoint = toScoreNumber(modalResult.value);
+    updateDisplayedResult(baseResult);
+  };
 
   const handleTimerStart = () => {
+    if (!hasActivePool) return;
     socket.emit("timer-start", { minutes });
   };
   onMount(async () => {
     win = window;
+    if (!hasActivePool) {
+      handleNotification(
+        window,
+        "No active pool found",
+        EnotificationType.INFO
+      );
+      return;
+    }
     socket = window.io("/display");
     socket.on("connect", () => {
       console.log(socket.id);
@@ -335,114 +416,133 @@
 <div class="h-100 container-fluid">
   <TopBar />
 
-  <h2>
-    Competition Controller {#if isFinal}
-      <button
-        on:click={showFinalsScore}
-        title="use this button to show finals result on TV screen"
-        class="float-right button primary mr-2">Show Final Result</button
-      >
-      <button
-        on:click={showRoundResultOnTV}
-        class=" button primary mr-2"
-        title="show group standing on TV display">show Group Standing</button
-      >
-    {/if}
-    <button
-      on:click={openJudgeScore}
-      title="use this button to upload scores only when judges screen has an issue"
-      class="float-right button primary">Input Scores</button
-    >
-  </h2>
-  <h3>{pool.poolName}</h3>
-
-  <div class="row">
-    <div class="cell">
-      <div class="card small">
-        <div class="card-body">
-          <p><small>Next Athlete</small></p>
-          <p><strong>{controller.nextAthlete.name}</strong></p>
-        </div>
-      </div>
-    </div>
-    {#if isTeamFinal}
-      <div class="cell mb-4">
-        <Timer
-          size="bigger"
-          {minutes}
-          seconds={0}
-          on:timerend={handleTimerEnd}
-          on:timerstart={handleTimerStart}
-          controls={true}
-        />
-      </div>
-    {/if}
-    <div class="cell float-right">
-      <div class="card small bg-green">
-        <div class="card-body">
-          <p><small> Current Athlete</small></p>
-          <p><strong>{controller.currentAthlete.name}</strong></p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="m-0 row">
-    <div class="w-100 col-12">
-      <div class="text-center">
-        <button on:click={startKata} class="button primary">start kata</button>
-      </div>
-      <br />
-      <table
-        class="table table-bordered table-responsive font-size-17 mt-5"
-        width="100%"
-      >
-        <thead
-          ><tr
-            ><th />{#each judges as judge, i}
-              <th style="color: white">{judge.judgeName}</th>
-            {/each}<th style="color: white">TOTAL</th>
-
-            <th style="color: white">RESULT</th></tr
-          ></thead
-        ><tbody
-          ><tr
-            ><td class="font-weight-bolder">SCORES</td>{#each judges as judge}
-              <td id={"tp" + judge.id}>{judge.RESULT || ""}</td>
-            {/each}
-            <td>{typeof total == "number" ? total.toFixed(2) : total}</td>
-            <td>{typeof result == "number" ? result.toFixed(2) : result}</td
-            ></tr
-          >
-          <tr style="height: 75px;">
-            {#each judges as judge}
-              <td> &nbsp;</td>
-            {/each}
-            <td style="background-color: red; color: white;"
-              >{typeof result == "number" ? result.toFixed(2) : result}</td
-            ></tr
-          ></tbody
+  {#if hasActivePool}
+    <h2>
+      Competition Controller {#if isFinal}
+        <button
+          on:click={showFinalsScore}
+          title="use this button to show finals result on TV screen"
+          class="float-right button primary mr-2">Show Final Result</button
         >
-      </table>
+        <button
+          on:click={showRoundResultOnTV}
+          class=" button primary mr-2"
+          title="show group standing on TV display">show Group Standing</button
+        >
+      {/if}
+      <button
+        on:click={openJudgeScore}
+        title="use this button to upload scores only when judges screen has an issue"
+        class="float-right button primary">Input Scores</button
+      >
+      <button
+        on:click={openExtraScoreModal}
+        title="add an extra score to the current athlete result"
+        class="float-right button warning mr-2">Extra Score</button
+      >
+    </h2>
+    <h3>{pool.poolName}</h3>
 
-      <div class="row mt-4">
-        <div class="cell-3">
-          <input
-            type="checkbox"
-            data-style="2"
-            id="final"
-            bind:checked={isFinal}
-            data-caption="is Final Bouth"
-          /><label for="final">is Team Final Bouth</label>
+    <div class="row">
+      <div class="cell">
+        <div class="card small">
+          <div class="card-body">
+            <p><small>Next Athlete</small></p>
+            <p><strong>{controller.nextAthlete.name}</strong></p>
+          </div>
         </div>
-        <div class="cell-9 text-center">
-          <button disabled={!submit} class="button success" on:click={upload}
-            >upload to Database</button
-          >
+      </div>
+      {#if isTeamFinal}
+        <div class="cell mb-4">
+          <Timer
+            size="bigger"
+            {minutes}
+            seconds={0}
+            on:timerend={handleTimerEnd}
+            on:timerstart={handleTimerStart}
+            controls={true}
+          />
+        </div>
+      {/if}
+      <div class="cell float-right">
+        <div class="card small bg-green">
+          <div class="card-body">
+            <p><small> Current Athlete</small></p>
+            <p><strong>{controller.currentAthlete.name}</strong></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <div class="m-0 row">
+      <div class="w-100 col-12">
+        <div class="text-center">
+          <button on:click={startKata} class="button primary">start kata</button>
+        </div>
+        <br />
+        <table
+          class="table table-bordered table-responsive font-size-17 mt-5"
+          width="100%"
+        >
+          <thead
+            ><tr
+              ><th />{#each judges as judge, i}
+                <th style="color: white">{judge.judgeName}</th>
+              {/each}<th style="color: white">TOTAL</th><th style="color: white"
+                  >EXTRA P.</th
+                >
+
+              <th style="color: white">RESULT</th></tr
+            ></thead
+          ><tbody
+            ><tr
+              ><td class="font-weight-bolder">SCORES</td>{#each judges as judge}
+                <td id={"tp" + judge.id}>{formatScore(judge.RESULT)}</td>
+              {/each}
+              <td>{formatScore(total)}</td>
+              <td>{formatScore(extraPoint)}</td>
+              <td>{formatScore(result)}</td
+              ></tr
+            >
+            <tr style="height: 75px;">
+              {#each judges as judge}
+                <td> &nbsp;</td>
+              {/each}
+              <td> &nbsp;</td>
+              <td> &nbsp;</td>
+              <td style="background-color: red; color: white;"
+                >{formatScore(result)}</td
+              ></tr
+            ></tbody
+          >
+        </table>
+
+        <div class="row mt-4">
+          <div class="cell-3">
+            <input
+              type="checkbox"
+              data-style="2"
+              id="final"
+              bind:checked={isFinal}
+              data-caption="is Final Bouth"
+            /><label for="final">is Team Final Bouth</label>
+          </div>
+          <div class="cell-9 text-center">
+            <button disabled={!submit} class="button success" on:click={upload}
+              >upload to Database</button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  {:else}
+    <div class="card mt-4">
+      <div class="card-body">
+        <h3>No active pool</h3>
+        <p>Activate a pool from the pools page before opening the competition controller.</p>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
