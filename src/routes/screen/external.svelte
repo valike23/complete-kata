@@ -337,10 +337,9 @@
       <div class="col-4">
         <div class="text-center">
           <img
-            class="img-fluid"
+            class="hero-flag"
             src={athlete.club.flag}
             alt="state-flag"
-            width="300"
           />
         </div>
       </div>
@@ -563,10 +562,9 @@
       </div>
       <div class="col-4">
         <img
-          class="img-fluid"
+          class="hero-flag"
           src="images/HAWKtm.png"
           alt="state-flag"
-          width="500"
         />
       </div>
       <div class="col-4">
@@ -586,8 +584,22 @@
   font-size: 3.45vw;
   font-weight: 600;
 }
+  .hero-flag {
+    width: 260px;
+    height: 160px;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+  }
   .flag {
-    width: 90px;
+    width: 220px;
+    height: 150px;
+    object-fit: contain;
+    object-position: center;
+    display: inline-block;
+    vertical-align: middle;
   }
   .box {
     margin-top: 10%;

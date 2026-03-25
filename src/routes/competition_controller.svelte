@@ -18,6 +18,7 @@
 <script>
   import { competitionController } from "../functions/controller";
   import TopBar from "../components/TopBar.svelte";
+  import { goto } from "@sapper/app";
   import { onMount } from "svelte";
   import axios from "axios";
   import Timer from "../components/Timer.svelte";
@@ -36,6 +37,16 @@
   let submit = false;
   let endofPool = false;
   const hasActivePool = !!pool;
+  const hasSavedPoolResult = (entry) => {
+    return (
+      entry &&
+      entry.pool_entries &&
+      ((entry.pool_entries.total !== undefined &&
+        entry.pool_entries.total !== null &&
+        entry.pool_entries.total !== "") ||
+        Number(entry.pool_entries.status) === 2)
+    );
+  };
   let handleTimerEnd = () => {
     console.log("timer end");
     socket.emit("end-timer", {});
@@ -48,6 +59,10 @@
   let total = 0;
   let baseResult = 0;
   let extraPoint = 0;
+  let canViewResults =
+    hasActivePool &&
+    Array.isArray(pool.entries) &&
+    pool.entries.some((entry) => hasSavedPoolResult(entry));
   let minutes = 5;
   const toScoreNumber = (value) => {
     const numericValue = Number(value);
@@ -57,6 +72,10 @@
   const updateDisplayedResult = (value) => {
     baseResult = toScoreNumber(value);
     result = baseResult + extraPoint;
+  };
+  const goToResult = () => {
+    if (!hasActivePool) return;
+    goto("pools/result?id=" + pool.id);
   };
   let fakePool = hasActivePool ? JSON.parse(JSON.stringify(pool)) : {};
   if (hasActivePool) {
@@ -198,6 +217,18 @@
     try {
       let res = await axios.put("api/pools/scores?id=" + poolEntryId, form);
       if (res) {
+        if (Array.isArray(pool.entries)) {
+          pool.entries.forEach((entry) => {
+            if (
+              entry.id == controller.currentAthlete.id &&
+              entry.pool_entries
+            ) {
+              entry.pool_entries.total = result;
+              entry.pool_entries.status = 2;
+            }
+          });
+          canViewResults = pool.entries.some((entry) => hasSavedPoolResult(entry));
+        }
         handleNotification(
           window,
           "scores uploaded successfully",
@@ -440,6 +471,13 @@
         title="add an extra score to the current athlete result"
         class="float-right button warning mr-2">Extra Score</button
       >
+      {#if canViewResults}
+        <button
+          on:click={goToResult}
+          title="view the current pool result"
+          class="float-right button success mr-2">Go To Result</button
+        >
+      {/if}
     </h2>
     <h3>{pool.poolName}</h3>
 

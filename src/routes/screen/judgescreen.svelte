@@ -193,10 +193,9 @@
           </div>
           <div class="cell-4">
             <img
-              class="img-fluid"
+              class="hero-flag"
               src={athlete.club.flag}
               alt="state-flag"
-              width="500"
             />
           </div>
           <div class="cell-4">
@@ -305,10 +304,9 @@
           </div>
           <div class="col-4">
             <img
-              class="img-fluid"
+              class="hero-flag"
               src="images/HAWKtm.png"
               alt="state-flag"
-              width="500"
             />
           </div>
           <div class="col-4">
@@ -441,6 +439,15 @@
     border-radius: 12px;
     border: 2px solid blue;
     text-align: center;
+  }
+  .hero-flag {
+    width: 260px;
+    height: 160px;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
   }
   p {
     font-size: 1.2rem;

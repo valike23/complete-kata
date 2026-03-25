@@ -47,10 +47,9 @@
     </div>
     <div class="col-4">
       <img
-        class="img-fluid"
+        class="hero-flag"
         src="images/HAWKtm.png"
         alt="state-flag"
-        width="500"
       />
     </div>
     <div class="col-4">
@@ -62,3 +61,15 @@
   </div>
   <br />
 </div>
+
+<style>
+  .hero-flag {
+    width: 260px;
+    height: 160px;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+  }
+</style>

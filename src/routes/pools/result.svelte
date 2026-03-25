@@ -19,79 +19,88 @@
   export let pool, clubsResp;
   console.log(' the pools here,',pool);
   let entries = [];
-  let clubs = clubsResp.body;
+  let clubs = clubsResp.body || [];
   console.log(clubs);
-  const setup = function (judges) {
-    let resu = 1;
-    let totalAth = 1;
-    let totalTech = 1;
-    let tempJudges = JSON.parse(JSON.stringify(judges));
-    let tempJudges2 = JSON.parse(JSON.stringify(judges));
-    let AAP = 0;
-    let TAP = 0;
-    let isComplete = false;
-    for (let index = 0; index < judges.length; index++) {
-      const element = judges[index];
-      if (element.athletic_performance == undefined) {
-        isComplete = false;
-        break;
-      } else {
-        isComplete = true;
-      }
+  const toScoreNumber = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : 0;
+  };
+  const formatScore = (value) => toScoreNumber(value).toFixed(2);
+  const roundScore = (value) => Number(toScoreNumber(value).toFixed(2));
+  const getJudgeKey = (judge) => {
+    if (!judge) return undefined;
+    if (judge.judgeId !== undefined && judge.judgeId !== null) {
+      return judge.judgeId;
     }
-    judges.forEach((j) => {
-      console.log(j.technical_performance, j.athletic_performance);
-      TAP += j.technical_performance;
-      AAP += j.athletic_performance;
+    return judge.id;
+  };
+  const setup = function (judges, savedTotal) {
+    const normalizedJudges = Array.isArray(judges) ? judges : [];
+    if (!normalizedJudges.length) {
+      return {
+        baseResult: 0,
+        finalTotal: 0,
+        extraPoint: 0,
+        droppedJudgeIds: [],
+      };
+    }
+
+    let summedScores = 0;
+    let isComplete = true;
+    let isDisqualified = false;
+
+    normalizedJudges.forEach((judge) => {
+      if (judge.RESULT == undefined) {
+        isComplete = false;
+      }
+      const judgeScore = toScoreNumber(judge.RESULT);
+      if (judgeScore === 0) isDisqualified = true;
+      summedScores += judgeScore;
     });
 
-    console.log(AAP, TAP);
-    if (isComplete) {
-      submit = true;
-      tempJudges.sort((a, b) => {
-        return a.technical_performance - b.technical_performance;
-      });
-      let lowestTP = tempJudges[0];
-      let highestTP = tempJudges[4];
-      console.log("lowest TP", lowestTP);
-      console.log("highest TP", highestTP);
-      tempJudges2.sort((a, b) => {
-        return a.athletic_performance - b.athletic_performance;
-      });
-      let lowestAP = tempJudges2[0];
-      let highestAP = tempJudges2[4];
-      console.log("lowest AP", lowestAP);
-      console.log("highest AP", highestAP);
-      const tpl = "tp" + lowestTP.id;
-      const tph = "tp" + highestTP.id;
-      const apl = "ap" + lowestAP.id;
-      const aph = "ap" + highestAP.id;
-      console.log(tpl, tph, apl, aph);
-      try {
-        document.getElementById(tpl).style.color = "red";
-        document.getElementById(tph).style.color = "red";
-        document.getElementById(apl).style.color = "red";
-        document.getElementById(aph).style.color = "red";
-      } catch (error) {}
+    let droppedJudgeIds = [];
+    let baseResult = summedScores;
 
-      AAP =
-        AAP - highestAP.athletic_performance - lowestAP.athletic_performance;
-      TAP =
-        TAP - highestTP.technical_performance - lowestTP.technical_performance;
-      totalAth = AAP;
-      totalTech = TAP;
-      resu = totalAth * 0.3 + totalTech * 0.7;
-    } else {
-      totalTech = AAP / judges.length;
-      totalAth = TAP / judges.length;
+    if (isComplete) {
+      const sortedJudges = JSON.parse(JSON.stringify(normalizedJudges)).sort(
+        (a, b) => toScoreNumber(a.RESULT) - toScoreNumber(b.RESULT)
+      );
+      const lowestJudge = sortedJudges[0];
+      const highestJudge = sortedJudges[sortedJudges.length - 1];
+      droppedJudgeIds = [getJudgeKey(lowestJudge), getJudgeKey(highestJudge)].filter(
+        (value) => value !== undefined && value !== null
+      );
+      baseResult =
+        summedScores -
+        toScoreNumber(lowestJudge.RESULT) -
+        toScoreNumber(highestJudge.RESULT);
     }
-    return { totalAth, totalTech, resu };
+
+    if (isDisqualified) {
+      summedScores = 0;
+      baseResult = 0;
+    }
+
+    const hasSavedTotal =
+      savedTotal !== undefined && savedTotal !== null && savedTotal !== "";
+    const storedTotal = hasSavedTotal ? roundScore(savedTotal) : roundScore(baseResult);
+    const extraPoint = hasSavedTotal
+      ? roundScore(Math.max(0, storedTotal - roundScore(baseResult)))
+      : 0;
+
+    return {
+      baseResult: roundScore(baseResult),
+      finalTotal: storedTotal,
+      extraPoint,
+      droppedJudgeIds,
+    };
   };
   const transform = () => {
     let result = [];
-    pool.entries.forEach((element, i) => {
-      const { totalAth, totalTech, resu } = setup(
-        element.pool_entries.judges
+    (pool.entries || []).forEach((element) => {
+      const scoreBreakdown = setup(
+        element.pool_entries.judges,
+        element.pool_entries.total
       );
       let entry = {
         name: element.name,
@@ -100,9 +109,10 @@
           return club.id == element.clubId;
         }),
         judges: element.pool_entries.judges,
-        TEC: element.pool_entries.TEC || totalTech,
-        ATH: element.pool_entries.ATH || totalAth,
-        total: element.pool_entries.total || resu,
+        extraPoint: scoreBreakdown.extraPoint,
+        baseResult: scoreBreakdown.baseResult,
+        total: scoreBreakdown.finalTotal,
+        droppedJudgeIds: scoreBreakdown.droppedJudgeIds,
       };
       result.push(entry);
     });
@@ -143,10 +153,12 @@
         <th style="color:white">Competitor</th>
         <th style="color:white">Club</th>
         <th style="color:white">Kata</th>
-        {#each entries[0].judges as judge, i}
-          <th style="color:white">Judge {i + 1}</th>
-        {/each}
-       
+        {#if entries.length}
+          {#each entries[0].judges as judge, i}
+            <th style="color:white">Judge {i + 1}</th>
+          {/each}
+        {/if}
+        <th style="color:white">Extra P.</th>
         <th style="color:white">Total</th>
       </tr>
     </thead>
@@ -155,15 +167,24 @@
         <tr>
           <td>{i + 1}</td>
           <td>{entry.name}</td>
-          <td>{entry.club.clubName}</td>
+          <td>{entry.club ? entry.club.clubName : ""}</td>
           <td>{entry.kata}</td>
           {#each entry.judges as judge}
-            <td>{judge.RESULT}</td>
-          
+            <td class:dropped-score={entry.droppedJudgeIds.includes(getJudgeKey(judge))}
+              >{formatScore(judge.RESULT)}</td
+            >
           {/each}
-          <td>{(entry.total || 0).toFixed(2)}</td>
+          <td>{formatScore(entry.extraPoint)}</td>
+          <td>{formatScore(entry.total)}</td>
         </tr>
       {/each}
     </tbody>
   </table>
 </div>
+
+<style>
+  .dropped-score {
+    color: red;
+    font-weight: 700;
+  }
+</style>
