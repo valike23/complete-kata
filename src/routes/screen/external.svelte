@@ -25,6 +25,22 @@
   let show = "";
   let minutes = 0;
   let seconds = 0;
+  let baseResult = 0;
+  let extraPoint = 0;
+  let droppedJudgeIds = [];
+  const toScoreNumber = (value) => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : 0;
+  };
+  const formatScore = (value) => toScoreNumber(value).toFixed(2);
+  const roundScore = (value) => Number(toScoreNumber(value).toFixed(2));
+  const getJudgeKey = (judge) => {
+    if (!judge) return undefined;
+    if (judge.judgeId !== undefined && judge.judgeId !== null) {
+      return judge.judgeId;
+    }
+    return judge.id;
+  };
   const handleTimerStart = () => {
     console.log("start kata");
   };
@@ -32,60 +48,50 @@
     console.log("end kata");
   };
   const setup = function () {
-    let tempJudges = JSON.parse(JSON.stringify(judges));
-    let tempJudges2 = JSON.parse(JSON.stringify(judges));
-    let AAP = 0;
-    let TAP = 0;
-    let isComplete = false;
-    for (let index = 0; index < judges.length; index++) {
-      const element = judges[index];
-      if (element.athletic_performance == undefined) {
+    const normalizedJudges = Array.isArray(judges) ? judges : [];
+    baseResult = 0;
+    extraPoint = 0;
+    droppedJudgeIds = [];
+
+    if (!normalizedJudges.length) return;
+
+    let summedScores = 0;
+    let isComplete = true;
+    let isDisqualified = false;
+
+    normalizedJudges.forEach((judge) => {
+      if (judge.RESULT == undefined) {
         isComplete = false;
-        break;
-      } else {
-        isComplete = true;
       }
-    }
-    judges.forEach((j) => {
-      console.log(j.technical_performance, j.athletic_performance);
-      TAP += j.technical_performance;
-      AAP += j.athletic_performance;
+      const judgeScore = toScoreNumber(judge.RESULT);
+      if (judgeScore === 0) isDisqualified = true;
+      summedScores += judgeScore;
     });
 
-    console.log(AAP, TAP);
+    baseResult = summedScores;
+
     if (isComplete) {
-      //submit = true;
-      tempJudges.sort((a, b) => {
-        return a.technical_performance - b.technical_performance;
-      });
-      let lowestTP = tempJudges[0];
-      let highestTP = tempJudges[4];
-      console.log("lowest TP", lowestTP);
-      console.log("highest TP", highestTP);
-      tempJudges2.sort((a, b) => {
-        return a.athletic_performance - b.athletic_performance;
-      });
-      let lowestAP = tempJudges2[0];
-      let highestAP = tempJudges2[4];
-      console.log("lowest AP", lowestAP);
-      console.log("highest AP", highestAP);
-      const tpl = "tp" + lowestTP.id;
-      const tph = "tp" + highestTP.id;
-      const apl = "ap" + lowestAP.id;
-      const aph = "ap" + highestAP.id;
-      console.log(tpl, tph, apl, aph);
-      try {
-        document.getElementById(tpl).style.color = "red";
-        document.getElementById(tph).style.color = "red";
-        document.getElementById(apl).style.color = "red";
-        document.getElementById(aph).style.color = "red";
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      totalTech = AAP / judges.length;
-      totalAth = TAP / judges.length;
+      const sortedJudges = JSON.parse(JSON.stringify(normalizedJudges)).sort(
+        (a, b) => toScoreNumber(a.RESULT) - toScoreNumber(b.RESULT)
+      );
+      const lowestJudge = sortedJudges[0];
+      const highestJudge = sortedJudges[sortedJudges.length - 1];
+      droppedJudgeIds = [getJudgeKey(lowestJudge), getJudgeKey(highestJudge)].filter(
+        (value) => value !== undefined && value !== null
+      );
+      baseResult =
+        summedScores -
+        toScoreNumber(lowestJudge.RESULT) -
+        toScoreNumber(highestJudge.RESULT);
     }
+
+    if (isDisqualified) {
+      baseResult = 0;
+    }
+
+    extraPoint = roundScore(
+      Math.max(0, toScoreNumber(result.total) - roundScore(baseResult))
+    );
   };
   onMount(() => {
     win = window;
@@ -416,7 +422,8 @@
     </div>
     <div class="row">
       <div class="col-3 red text-center">
-        <h1 style="font-size: 90px;font-weight:700" class="pt-4 pb-4">{Number(result.total).toFixed(2)}</h1>
+        <h1 style="font-size: 90px;font-weight:700" class="pt-4 pb-4">{formatScore(result.total)}</h1>
+        <p class="extra-points-text pb-4">Extra P. +{formatScore(extraPoint)}</p>
       </div>
       
       <div class="col-6">
@@ -438,12 +445,18 @@
     <div class="mt-2">
       <span class="s-h3 soft-border">Scores</span>
       {#each judges as judge}
-        <span id={"ap" + judge.id} style="font-size: 60px;" class="s-h3 soft-border pt-3 pb-3 s-border"
-          >{judge.RESULT || ""}</span
+        <span
+          style="font-size: 60px;"
+          class="s-h3 soft-border pt-3 pb-3 s-border"
+          class:dropped-score={droppedJudgeIds.includes(getJudgeKey(judge))}
+          >{formatScore(judge.RESULT)}</span
         >
       {/each}
+      <span class="s-h3 soft-border pt-3 pb-3 extra-points-text">
+        Extra P. +{formatScore(extraPoint)}
+      </span>
       <span style="font-size: 70px" class="s-h3 soft-border  pt-3 pb-3">
-        {Number(result.total).toFixed(2)}
+        {formatScore(result.total)}
       </span>
     </div>
     <div class="row">
@@ -614,6 +627,14 @@
   }
   .qrcode {
     width: 100px;
+  }
+  .dropped-score {
+    color: red;
+    font-weight: 700;
+  }
+  .extra-points-text {
+    color: #ffd166;
+    font-weight: 700;
   }
   .s-border {
     border-left: 2px solid white;
