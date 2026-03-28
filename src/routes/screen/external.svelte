@@ -640,7 +640,9 @@
     font-size: 32px;
   }
   .extra-points-inline {
-    font-size: 60px;
+    font-size: 60px !important;
+    font-weight: 700;
+    line-height: 1;
   }
   .s-border {
     border-left: 2px solid white;
