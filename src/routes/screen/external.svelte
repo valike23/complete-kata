@@ -423,7 +423,7 @@
     <div class="row">
       <div class="col-3 red text-center">
         <h1 style="font-size: 90px;font-weight:700" class="pt-4 pb-4">{formatScore(result.total)}</h1>
-        <p class="extra-points-text pb-4">Extra P. +{formatScore(extraPoint)}</p>
+        <p class="extra-points-text extra-points-panel pb-4">Extra P. +{formatScore(extraPoint)}</p>
       </div>
       
       <div class="col-6">
@@ -452,7 +452,7 @@
           >{formatScore(judge.RESULT)}</span
         >
       {/each}
-      <span class="s-h3 soft-border pt-3 pb-3 extra-points-text">
+      <span class="s-h3 soft-border pt-3 pb-3 extra-points-text extra-points-inline">
         Extra P. +{formatScore(extraPoint)}
       </span>
       <span style="font-size: 70px" class="s-h3 soft-border  pt-3 pb-3">
@@ -635,6 +635,12 @@
   .extra-points-text {
     color: #ffd166;
     font-weight: 700;
+  }
+  .extra-points-panel {
+    font-size: 32px;
+  }
+  .extra-points-inline {
+    font-size: 60px;
   }
   .s-border {
     border-left: 2px solid white;
