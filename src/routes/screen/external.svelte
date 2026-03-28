@@ -452,8 +452,11 @@
           >{formatScore(judge.RESULT)}</span
         >
       {/each}
-      <span class="s-h3 soft-border pt-3 pb-3 extra-points-text extra-points-inline">
-        Extra P. +{formatScore(extraPoint)}
+      <span class="soft-border pt-3 pb-3 s-border extra-points-stack">
+        <span class="extra-points-label">Extra P.</span>
+        <span class="extra-points-text extra-points-value"
+          >+{formatScore(extraPoint)}</span
+        >
       </span>
       <span style="font-size: 70px" class="s-h3 soft-border  pt-3 pb-3">
         {formatScore(result.total)}
@@ -639,9 +642,22 @@
   .extra-points-panel {
     font-size: 32px;
   }
-  .extra-points-inline {
-    font-size: 60px !important;
+  .extra-points-stack {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 180px;
+    min-height: 120px;
+    vertical-align: middle;
+  }
+  .extra-points-label {
+    color: #ffd166;
+    font-size: 26px;
     font-weight: 700;
+    line-height: 1.1;
+  }
+  .extra-points-value {
+    font-size: 60px;
     line-height: 1;
   }
   .s-border {
